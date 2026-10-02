@@ -32,8 +32,8 @@ Gruf組み込みBasic認証のソースは、移行先namespaceと継承先を�
 | --- | --- | --- |
 | 実Gruf・Gritz移行比較 | Linux、Ruby 3.4.11、grpc 1.83.0、ActiveRecord 8.1.4 | 9 examples、0 failures、2.52秒 |
 | 実Gruf・Gritz移行比較 | macOS、Ruby 4.0.6、grpc 1.83.0、ActiveRecord 8.1.4 | 9 examples、0 failures、2.23秒 |
-| Core互換API・設定変換 | Linux、Ruby 3.4.11 | 20 examples、0 failures、0.383秒 |
-| Core互換API・設定変換 | macOS、Ruby 4.0.6 | 20 examples、0 failures、0.640秒 |
+| Core互換API・設定変換 | Linux、Ruby 3.4.11 | 22 examples、0 failures。Core全187件も成功 |
+| Core互換API・設定変換 | macOS、Ruby 4.0.6 | 22 examples、0 failures。Core全187件も成功 |
 
 Linuxの既存コンテナ`gritz-t2-test`で以下を実行した。
 `tmp/phase5.Gemfile`は3つのGritz GemとRails統合をローカルpathで読み、検証用にGruf 2.22.0、ActiveRecord、SQLite、RSpecを含む非公開Bundleである。
@@ -56,6 +56,7 @@ docker exec -e BUNDLE_GEMFILE=/workspace/gritz-native/tmp/phase5.Gemfile \
 終了時は両プロセスへTERMを送り、成功終了と、所有PIDが`kill(0)`で`ESRCH`になることを確認した。
 
 Core側のケースは追加依存なしで実行し、Interceptorの先読みでリクエストを二重消費しないこと、FIFOの実行順、RPCごとのoptionsの分離も確認する。
+標準Controllerと移行済みInterceptorを併用しても読み取り・受信計上は1回で、client streamingの`request.message.call { ... }`とbidiのEnumerableも維持する。
 遅延ストリームが最初の応答後に失敗した場合、列挙中もInterceptorとMiddlewareが有効で、終了処理・NotFoundログ・送信量が反映された。
 設定変換はRipperによるリテラル解析だけを使い、実行コード・動的値・未対応項目・重複を拒否する。
 入力に置いた`File.write`は実行されず、CLIの既存出力ファイルも変更されなかった。
