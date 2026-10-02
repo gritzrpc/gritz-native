@@ -52,6 +52,15 @@ RSpec.describe "Linux supervisor failure exits", skip: RUBY_PLATFORM.include?("l
     expect_reaped(worker)
   end
 
+  it "allows failed worker startup cleanup to finish before its shutdown deadline" do
+    start_cluster("boot_cleanup")
+    expect(@cluster.wait(timeout: 2).exitstatus).to eq(1)
+    expect(events.count { |event| event[:event] == "boot" }).to eq(1)
+    expect(events.count { |event| event[:event] == "shutdown" }).to eq(1)
+    expect(events.count { |event| event[:event] == "shutdown_done" }).to eq(1)
+    expect_reaped(events.first.fetch(:pid))
+  end
+
   it "replaces a timed-out booting worker without treating the intentional kill as startup failure" do
     start_cluster("hang_once", GRITZ_WORKER_BOOT_TIMEOUT: "0.2").wait_until(workers: 1)
     booted = events.select { |event| event[:event] == "boot" }.map { |event| event.fetch(:pid) }

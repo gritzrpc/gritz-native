@@ -1,0 +1,39 @@
+{
+  "started_at": "2026-10-02T06:21:38Z",
+  "duration_seconds": 10.0,
+  "workers": 4,
+  "passed": false,
+  "old_worker_pids": [
+    17324,
+    17327,
+    17330,
+    17333
+  ],
+  "requests_before_restart": {
+    "17324": 11,
+    "17327": 12,
+    "17330": 15,
+    "17333": 12
+  },
+  "restart_seconds": 0.8816310669935774,
+  "new_worker_pids": [
+    17439,
+    17466,
+    17494,
+    17522
+  ],
+  "ghz": {
+    "count": 998,
+    "total": 9992082169,
+    "average": 11568160,
+    "statusCodeDistribution": {
+      "Canceled": 1,
+      "OK": 997
+    },
+    "errorDistribution": {
+      "rpc error: code = Canceled desc = CANCELLED": 1
+    }
+  },
+  "error": "RuntimeError: ghz reported errors: {\"rpc error: code = Canceled desc = CANCELLED\" => 1}",
+  "finished_at": "2026-10-02T06:21:48Z"
+}

@@ -46,6 +46,12 @@ module Gritz
           @port = transport.bind
           @address = @config.bind.sub(/:\d+\z/, ":#{port}")
           transport.start
+          unless @config.health_checks.empty?
+            @health_stop = Queue.new
+            @health_thread = Thread.new do
+              transport.refresh_health until @health_stop.pop(timeout: @config.status_interval)
+            end
+          end
           self
         rescue StandardError
           stop
@@ -58,6 +64,10 @@ module Gritz
 
         @stopped = true
         begin
+          @health_stop&.push(true)
+          if @health_thread && !@health_thread.join(@config.shutdown_timeout)
+            @health_thread.kill.join
+          end
           transport&.stop(deadline: Time.now + @config.shutdown_timeout)
         ensure
           @config.run_hooks(:on_worker_shutdown, 0) if @lifecycle_started

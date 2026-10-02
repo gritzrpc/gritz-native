@@ -1,0 +1,187 @@
+{
+  "started_at": "2026-10-02T07:55:43Z",
+  "cluster": "gritz-phase3-ee2449dd",
+  "image": "gritz-phase3-final:local",
+  "passed": true,
+  "driver_ruby": "ruby 4.0.6 (2026-07-14 revision 03b6d3f889) +PRISM [arm64-darwin25]",
+  "node_image": "kindest/node@sha256:5dccdf63c6078c3edc2a044974ca5a25f574988b6bdeb9ace9a695655bc8b6e1",
+  "old_pods": [
+    "gritz-68dbbc4cb8-228r5",
+    "gritz-68dbbc4cb8-v4rhm"
+  ],
+  "loaded_workers": [
+    {
+      "rss_bytes": 33435648,
+      "pss_bytes": 14256128,
+      "inflight": 0,
+      "capacity": 16,
+      "requests_total": 4,
+      "oldest_inflight_age": 0,
+      "busy": 0,
+      "rejected_total": 0,
+      "ts": 261942.781681453,
+      "port": 50051,
+      "busy_threads": 0,
+      "healthy": true,
+      "checks": {},
+      "worker_started_at": 261940.660445261,
+      "pid": 17,
+      "index": 0,
+      "state": "ready",
+      "retiring": false,
+      "master_pid": 15
+    },
+    {
+      "rss_bytes": 33460224,
+      "pss_bytes": 14180352,
+      "inflight": 0,
+      "capacity": 16,
+      "requests_total": 5,
+      "oldest_inflight_age": 0,
+      "busy": 0,
+      "rejected_total": 0,
+      "ts": 261942.783165827,
+      "port": 50051,
+      "busy_threads": 0,
+      "healthy": true,
+      "checks": {},
+      "worker_started_at": 261940.663216343,
+      "pid": 20,
+      "index": 1,
+      "state": "ready",
+      "retiring": false,
+      "master_pid": 15
+    },
+    {
+      "rss_bytes": 33632256,
+      "pss_bytes": 14649344,
+      "inflight": 0,
+      "capacity": 16,
+      "requests_total": 10,
+      "oldest_inflight_age": 0,
+      "busy": 0,
+      "rejected_total": 0,
+      "ts": 261942.909210062,
+      "port": 50051,
+      "busy_threads": 0,
+      "healthy": true,
+      "checks": {},
+      "worker_started_at": 261940.637340772,
+      "pid": 18,
+      "index": 0,
+      "state": "ready",
+      "retiring": false,
+      "master_pid": 16
+    },
+    {
+      "rss_bytes": 33308672,
+      "pss_bytes": 14162944,
+      "inflight": 0,
+      "capacity": 16,
+      "requests_total": 4,
+      "oldest_inflight_age": 0,
+      "busy": 0,
+      "rejected_total": 0,
+      "ts": 261942.903097023,
+      "port": 50051,
+      "busy_threads": 0,
+      "healthy": true,
+      "checks": {},
+      "worker_started_at": 261940.638176646,
+      "pid": 21,
+      "index": 1,
+      "state": "ready",
+      "retiring": false,
+      "master_pid": 16
+    }
+  ],
+  "endpoint_samples": [
+    {
+      "at": "2026-10-02T07:56:31Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:31Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:31Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:32Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:32Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:32Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:33Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:33Z",
+      "ready_endpoints": 3
+    },
+    {
+      "at": "2026-10-02T07:56:34Z",
+      "ready_endpoints": 3
+    },
+    {
+      "at": "2026-10-02T07:56:34Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:34Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:35Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:35Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:35Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:36Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:56:36Z",
+      "ready_endpoints": 3
+    },
+    {
+      "at": "2026-10-02T07:56:36Z",
+      "ready_endpoints": 3
+    },
+    {
+      "at": "2026-10-02T07:56:37Z",
+      "ready_endpoints": 2
+    }
+  ],
+  "ghz": {
+    "count": 9004,
+    "total": 90055755988,
+    "average": 610578,
+    "statusCodeDistribution": {
+      "OK": 9004
+    },
+    "errorDistribution": {}
+  },
+  "new_pods": [
+    "gritz-6f78f6577f-cjzk5",
+    "gritz-6f78f6577f-mgpjw"
+  ],
+  "cluster_deleted": true,
+  "finished_at": "2026-10-02T07:58:04Z"
+}

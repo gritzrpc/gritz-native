@@ -12,6 +12,7 @@ end
 
 workers 1
 bind ENV.fetch("FAILURE_BIND")
+admin_bind "127.0.0.1:0"
 status_interval 0.02
 worker_timeout 1.0
 worker_boot_timeout 2.0
@@ -30,6 +31,7 @@ on_worker_boot do
   case ENV.fetch("FAILURE_MODE", nil)
   when "hard_exit" then Process.exit!(7)
   when "hard_exit_success" then Process.exit!(0)
+  when "boot_cleanup" then raise "requested boot failure"
   when "hang_once"
     marker = ENV.fetch("FAILURE_MARKER")
     unless File.exist?(marker)
@@ -41,5 +43,9 @@ end
 
 on_worker_shutdown do
   record.call("shutdown")
+  if ENV["FAILURE_MODE"] == "boot_cleanup"
+    sleep 0.08
+    record.call("shutdown_done")
+  end
   raise "requested shutdown hook failure" if ENV["FAILURE_MODE"] == "shutdown_error"
 end

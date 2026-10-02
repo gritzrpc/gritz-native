@@ -1,0 +1,43 @@
+{
+  "started_at": "2026-10-02T06:55:54Z",
+  "duration_seconds": 10.0,
+  "workers": 4,
+  "passed": true,
+  "ruby": "ruby 3.4.11 (2026-09-23 revision 592f1ffdb3) +PRISM [aarch64-linux]",
+  "grpc": "1.83.0",
+  "old_worker_pids": [
+    22099,
+    22102,
+    22105,
+    22107
+  ],
+  "requests_before_restart": {
+    "22099": 15,
+    "22102": 12,
+    "22105": 10,
+    "22107": 15
+  },
+  "restart_seconds": 0.8740882730053272,
+  "new_worker_pids": [
+    22304,
+    22357,
+    22413,
+    22441
+  ],
+  "ghz": {
+    "count": 998,
+    "total": 9997250761,
+    "average": 11495473,
+    "statusCodeDistribution": {
+      "OK": 998
+    },
+    "errorDistribution": {}
+  },
+  "requests_after_restart": {
+    "22304": 248,
+    "22357": 273,
+    "22413": 210,
+    "22441": 151
+  },
+  "finished_at": "2026-10-02T06:56:05Z"
+}

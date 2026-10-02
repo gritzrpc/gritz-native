@@ -1,0 +1,163 @@
+{
+  "started_at": "2026-10-02T07:41:51Z",
+  "cluster": "gritz-phase3-81c994dc",
+  "image": "gritz-phase3-e2e:local",
+  "passed": true,
+  "driver_ruby": "ruby 4.0.6 (2026-07-14 revision 03b6d3f889) +PRISM [arm64-darwin25]",
+  "node_image": "kindest/node@sha256:5dccdf63c6078c3edc2a044974ca5a25f574988b6bdeb9ace9a695655bc8b6e1",
+  "old_pods": [
+    "gritz-5d4dd6c58-h2nrn",
+    "gritz-5d4dd6c58-mkdts"
+  ],
+  "loaded_workers": [
+    {
+      "rss_bytes": 33267712,
+      "pss_bytes": 13938688,
+      "inflight": 0,
+      "capacity": 16,
+      "requests_total": 2,
+      "oldest_inflight_age": 0,
+      "busy": 0,
+      "rejected_total": 0,
+      "ts": 261104.757081677,
+      "port": 50051,
+      "busy_threads": 0,
+      "healthy": true,
+      "checks": {},
+      "worker_started_at": 261102.639681967,
+      "pid": 17,
+      "index": 0,
+      "state": "ready",
+      "retiring": false,
+      "master_pid": 15
+    },
+    {
+      "rss_bytes": 33337344,
+      "pss_bytes": 13883392,
+      "inflight": 0,
+      "capacity": 16,
+      "requests_total": 3,
+      "oldest_inflight_age": 0,
+      "busy": 0,
+      "rejected_total": 0,
+      "ts": 261104.698206934,
+      "port": 50051,
+      "busy_threads": 0,
+      "healthy": true,
+      "checks": {},
+      "worker_started_at": 261102.640073887,
+      "pid": 20,
+      "index": 1,
+      "state": "ready",
+      "retiring": false,
+      "master_pid": 15
+    },
+    {
+      "rss_bytes": 33603584,
+      "pss_bytes": 14519296,
+      "inflight": 0,
+      "capacity": 16,
+      "requests_total": 11,
+      "oldest_inflight_age": 0,
+      "busy": 0,
+      "rejected_total": 0,
+      "ts": 261104.877154177,
+      "port": 50051,
+      "busy_threads": 0,
+      "healthy": true,
+      "checks": {},
+      "worker_started_at": 261102.636695905,
+      "pid": 19,
+      "index": 0,
+      "state": "ready",
+      "retiring": false,
+      "master_pid": 17
+    },
+    {
+      "rss_bytes": 33423360,
+      "pss_bytes": 14161920,
+      "inflight": 0,
+      "capacity": 16,
+      "requests_total": 7,
+      "oldest_inflight_age": 0,
+      "busy": 0,
+      "rejected_total": 0,
+      "ts": 261104.877061177,
+      "port": 50051,
+      "busy_threads": 0,
+      "healthy": true,
+      "checks": {},
+      "worker_started_at": 261102.664115179,
+      "pid": 29,
+      "index": 1,
+      "state": "ready",
+      "retiring": false,
+      "master_pid": 17
+    }
+  ],
+  "endpoint_samples": [
+    {
+      "at": "2026-10-02T07:42:32Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:42:33Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:42:33Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:42:34Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:42:34Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:42:34Z",
+      "ready_endpoints": 3
+    },
+    {
+      "at": "2026-10-02T07:42:35Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:42:35Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:42:35Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:42:36Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:42:36Z",
+      "ready_endpoints": 2
+    },
+    {
+      "at": "2026-10-02T07:42:37Z",
+      "ready_endpoints": 2
+    }
+  ],
+  "ghz": {
+    "count": 5999,
+    "total": 60001951786,
+    "average": 1156804,
+    "statusCodeDistribution": {
+      "OK": 5999
+    },
+    "errorDistribution": {}
+  },
+  "new_pods": [
+    "gritz-66bf765f77-cqxqk",
+    "gritz-66bf765f77-pdxmj"
+  ],
+  "cluster_deleted": true,
+  "finished_at": "2026-10-02T07:43:35Z"
+}

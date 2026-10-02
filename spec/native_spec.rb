@@ -235,6 +235,12 @@ RSpec.describe "gRPC transport" do
       caller = Thread.new { stub.say_hello(message("x"), deadline: Time.now + 5) }
       expect(entered.pop(timeout: 2)).to be true
       expect { stub.say_hello(message("x"), deadline: Time.now + 2) }.to raise_error(GRPC::ResourceExhausted)
+      deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 2
+      until server.transport.stats[:rejected_total] == 1
+        raise "rejection was not counted" if Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+
+        sleep 0.001
+      end
       expect(server.transport.stats).to include(inflight: 1, busy: 1, capacity: 1, rejected_total: 1)
       release << true
       expect(caller.value.message).to eq "done"

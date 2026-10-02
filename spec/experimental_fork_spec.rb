@@ -47,7 +47,7 @@ RSpec.describe "Experimental native fork support", skip: RUBY_PLATFORM.include?(
 
       @cluster.signal("TTIN").wait_until(workers: 2)
       events = File.readlines(@events_path).map { |line| JSON.parse(line, symbolize_names: true) }
-      expect(events.map { |event| event[:pid] }).to eq([@cluster.pid, @cluster.pid])
+      expect(events.map { |event| event[:pid] }).to eq([@cluster.master_pid, @cluster.master_pid])
       expect(events.map { |event| event[:message] }).to eq(%w[upstream:master:0 upstream:master:1])
       expect(@cluster.workers.map { |worker| worker[:port] }.uniq).to eq([@address.split(":").last.to_i])
       @cluster.stop

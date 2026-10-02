@@ -23,3 +23,13 @@ python bench/plot_soak.py tmp/soak-result.json --output tmp/soak-memory.svg
 ```
 
 Matplotlib is used only for reports and is not a Gem dependency.
+
+## Production operation gates
+
+`bundle exec ruby bench/phased_restart.rb --ghz /path/to/ghz` runs four Linux workers under ghz load and replaces all workers with `USR1`.
+It verifies load on every original and replacement worker, reaping, successful shutdown, and zero ghz errors.
+The [recorded Phase 3 result](../docs/reports/T3-01-phased-restart.md) retains successful repetitions and the initial failed run.
+
+`ruby bench/kind_rollout.rb --ghz /path/to/linux/ghz --core ../gritz-core` builds the local sources and runs a two-replica rollout in an isolated kind cluster.
+See the [Kubernetes guide](../docs/guides/kubernetes.md) for resource budgets, probes, sysctl settings, and result files.
+`ruby bench/check_kind_failure.rb` checks failed-Job log retention and owned-cluster cleanup without starting Kubernetes.

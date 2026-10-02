@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-10-02T07:38:02Z",
+  "cluster": "gritz-phase3-cfa4583f",
+  "image": "gritz-phase3-e2e:local",
+  "passed": false,
+  "driver_ruby": "ruby 4.0.6 (2026-07-14 revision 03b6d3f889) +PRISM [arm64-darwin25]",
+  "node_image": "kindest/node@sha256:5dccdf63c6078c3edc2a044974ca5a25f574988b6bdeb9ace9a695655bc8b6e1",
+  "error": "RuntimeError: /private/tmp/gritz-kubectl failed: error: timed out waiting for the condition\n\nWaiting for deployment \"gritz\" rollout to finish: 0 of 2 updated replicas are available...\n",
+  "cluster_deleted": true,
+  "finished_at": "2026-10-02T07:40:42Z"
+}

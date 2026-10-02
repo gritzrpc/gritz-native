@@ -8,7 +8,7 @@ module Gritz
     # Runs generated services through Gritz's transport-independent dispatcher.
     # @api public
     class Native
-      def self.capabilities = Set[:unary, :client_streaming, :server_streaming, :bidi, :reuseport].freeze
+      def self.capabilities = Set[:unary, :client_streaming, :server_streaming, :bidi, :reuseport, :health, :tls, :mtls].freeze
 
       def self.prefork
         GRPC.prefork
@@ -32,9 +32,9 @@ module Gritz
       # @return [Integer] the port selected by C-core
       def bind(listener_spec = @config.bind)
         raise ArgumentError, "transport is already bound" if @server
-        raise ArgumentError, "TLS is not available in this version" unless @config.tls.empty?
         raise ArgumentError, "at least one controller must be registered" if @dispatcher.router.routes.empty?
 
+        credentials = server_credentials
         created_server = @server = Server.new(
           pool_size: @config.threads,
           # grpc 1.83 accepts but ignores this value: busy pools reject immediately.
@@ -47,7 +47,9 @@ module Gritz
         @dispatcher.router.routes.values.group_by(&:service_class).each do |service_class, descriptors|
           @server.handle(Bridge.build(service_class, descriptors, self))
         end
-        @port = @server.add_http2_port(listener_spec, :this_port_is_insecure)
+        @health = Health.new(@dispatcher.router.routes.values.map(&:service).uniq)
+        @server.handle(@health)
+        @port = @server.add_http2_port(listener_spec, credentials)
         raise ArgumentError, "could not bind #{listener_spec}" unless @port.positive?
 
         @port
@@ -62,7 +64,10 @@ module Gritz
         raise ArgumentError, "transport is already started" if @thread
 
         @thread = Thread.new { @server.run }
-        return self if @server.wait_till_running(5)
+        if @server.wait_till_running(5)
+          refresh_health
+          return self
+        end
 
         @thread.value unless @thread.alive?
         kill
@@ -76,6 +81,7 @@ module Gritz
       def running? = @thread&.alive? && @server.running?
 
       def stop(deadline:)
+        drain!
         unless @thread
           @server&.close_unstarted
           @server = nil
@@ -88,11 +94,35 @@ module Gritz
 
       def kill = stop(deadline: Time.now)
 
+      def update_health(ready:, checks: {})
+        healthy = ready && checks.values.all? && !@draining
+        @health&.update(healthy)
+        healthy
+      end
+
+      def drain!
+        @draining = true
+        @health&.drain!
+        self
+      end
+
+      # @api private
+      def refresh_health
+        checks = @config.health_checks.transform_values do |check|
+          check.call ? true : false
+        rescue StandardError => e
+          @logger.warn("Health check failed (#{e.class})")
+          false
+        end
+        update_health(ready: running?, checks:)
+      end
+
       def stats
+        busy = @server&.busy_threads || 0
         @lock.synchronize do
           oldest = @inflight.values.min
           {
-            inflight: @inflight.size, busy: @inflight.size, capacity: @config.threads,
+            inflight: @inflight.size, busy: busy, capacity: @config.threads,
             rejected_total: @rejected_total, requests_total: @requests_total,
             oldest_inflight_age: oldest ? Process.clock_gettime(Process::CLOCK_MONOTONIC) - oldest : 0
           }
@@ -113,6 +143,14 @@ module Gritz
       end
 
       private
+
+      def server_credentials
+        return :this_port_is_insecure if @config.tls.empty?
+
+        ca = @config.tls[:client_ca] && File.read(@config.tls[:client_ca])
+        GRPC::Core::ServerCredentials.new(ca, [{ private_key: File.read(@config.tls.fetch(:key)),
+                                                 cert_chain: File.read(@config.tls.fetch(:cert)) }], !ca.nil?)
+      end
 
       def status_exception(call, error)
         metadata = call.trailing_metadata.merge(error.metadata)

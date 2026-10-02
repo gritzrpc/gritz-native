@@ -33,6 +33,7 @@ worker_boot_timeout 5.0
 drain_delay 0.05
 shutdown_timeout 2.0
 register_controller ClusterGreeterController
+health_check(:dependency) { File.read(ENV.fetch("CLUSTER_HEALTH_FILE")) == "ready" } if ENV["CLUSTER_HEALTH_FILE"]
 
 record = lambda do |event, index|
   path = ENV.fetch("CLUSTER_EVENTS", nil)
