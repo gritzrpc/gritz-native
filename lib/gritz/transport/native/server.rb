@@ -2,7 +2,7 @@
 
 module Gritz
   module Transport
-    class GrpcCore
+    class Native
       # Adapts RpcServer's lifecycle and rejection callbacks.
       # @api private
       class Server < GRPC::RpcServer

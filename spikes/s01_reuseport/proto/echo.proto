@@ -1,0 +1,12 @@
+syntax = "proto3";
+package echo;
+
+service EchoService {
+  rpc Echo(EchoRequest) returns (EchoReply);
+  rpc Burn(BurnRequest) returns (EchoReply);
+  rpc Chat(stream EchoRequest) returns (stream EchoReply);
+}
+
+message EchoRequest { string message = 1; }
+message BurnRequest { int32 ms = 1; }
+message EchoReply { string message = 1; int32 pid = 2; }

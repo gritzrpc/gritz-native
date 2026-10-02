@@ -1,0 +1,7 @@
+{
+  "name": "Gritz Linux",
+  "build": { "dockerfile": "Dockerfile" },
+  "runArgs": ["--sysctl", "net.ipv4.tcp_migrate_req=1"],
+  "postCreateCommand": "bundle install",
+  "forwardPorts": [50051, 9090]
+}

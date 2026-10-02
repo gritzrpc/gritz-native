@@ -2,7 +2,7 @@
 
 module Gritz
   module Transport
-    class GrpcCore
+    class Native
       # Translates the public grpc views into the Call contract.
       # @api private
       class Call

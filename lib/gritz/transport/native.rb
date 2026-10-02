@@ -7,7 +7,7 @@ module Gritz
   module Transport
     # Runs generated services through Gritz's transport-independent dispatcher.
     # @api public
-    class GrpcCore
+    class Native
       def self.capabilities = Set[:unary, :client_streaming, :server_streaming, :bidi, :reuseport].freeze
 
       def initialize(config:, dispatcher:, logger:)

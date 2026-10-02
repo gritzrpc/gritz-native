@@ -40,7 +40,7 @@ module Gritz
           @config.preload! if @config.preload_app?
           router = Router.new(controllers: @config.controllers, strict: @config.strict_routes, logger: @logger)
           dispatcher = Dispatcher.new(router:, middleware: @config.middleware, logger: @logger)
-          @transport = Transport::GrpcCore.new(config: @config, dispatcher:, logger: @logger)
+          @transport = Transport::Native.new(config: @config, dispatcher:, logger: @logger)
           @lifecycle_started = true
           @config.run_hooks(:on_worker_boot, 0)
           @port = transport.bind

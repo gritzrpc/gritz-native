@@ -2,7 +2,7 @@
 
 module Gritz
   module Transport
-    class GrpcCore
+    class Native
       # Installs handlers with the arities checked by GRPC::RpcDesc.
       # @api private
       module Bridge
