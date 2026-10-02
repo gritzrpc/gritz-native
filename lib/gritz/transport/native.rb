@@ -10,6 +10,15 @@ module Gritz
     class Native
       def self.capabilities = Set[:unary, :client_streaming, :server_streaming, :bidi, :reuseport].freeze
 
+      def self.prefork
+        GRPC.prefork
+      rescue RuntimeError => e
+        raise "#{e.message}. fork_mode :grpc_fork_support requires GRPC_ENABLE_FORK_SUPPORT=1 before requiring grpc."
+      end
+
+      def self.postfork_parent = GRPC.postfork_parent
+      def self.postfork_child = GRPC.postfork_child
+
       def initialize(config:, dispatcher:, logger:)
         @config = config
         @dispatcher = dispatcher
