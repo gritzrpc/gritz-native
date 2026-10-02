@@ -18,9 +18,9 @@ Gem::Specification.new do |spec|
     "changelog_uri" => "#{spec.homepage}/blob/main/CHANGELOG.md",
     "rubygems_mfa_required" => "true"
   }
-  spec.files = Dir.chdir(__dir__) { Dir["lib/**/*.rb", "README.md", "LICENSE.txt", "CHANGELOG.md"] }
+  spec.files = Dir.chdir(__dir__) { Dir["lib/**/*.rb", "proto/**/*.proto", "proto/LICENSE.grpc-proto", "README.md", "LICENSE.txt", "CHANGELOG.md"] }
   spec.require_paths = ["lib"]
   spec.add_dependency "googleapis-common-protos-types", ">= 1.20", "< 2"
-  spec.add_dependency "gritz-core", "= 0.4.0"
+  spec.add_dependency "gritz-core", "= 0.5.0"
   spec.add_dependency "grpc", ">= 1.83", "< 2"
 end

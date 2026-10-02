@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package reflection_fixture;
+
+import "google/protobuf/timestamp.proto";
+
+message Other { optional google.protobuf.Timestamp at = 1; }

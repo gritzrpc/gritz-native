@@ -23,6 +23,8 @@ end
 
 The helper opens an ephemeral port and stops the server when the block exits. The helper runs a single process. Supervised native servers support forked workers on Linux. TLS and required client certificate verification are configured with `tls cert:, key:, client_ca:`. Standard gRPC Health Check/Watch tracks application checks and draining. See the [Kubernetes guide](docs/guides/kubernetes.md) and [framework configuration](https://github.com/gritzrpc/gritz-core/blob/main/docs/guides/configuration.md).
 
+Set `reflection true` to enable gRPC Reflection v1/v1alpha for registered services, message descriptors and protobuf imports. The default is disabled. See the [Reflection guide](docs/guides/reflection.md).
+
 ## Development
 
 ```sh

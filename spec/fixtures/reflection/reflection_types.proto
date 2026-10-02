@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package reflection_fixture;
+
+import "google/protobuf/timestamp.proto";
+import "reflection_other.proto";
+
+message Request {
+  optional google.protobuf.Timestamp at = 1;
+  message Nested { optional string value = 1; }
+  enum State { UNKNOWN = 0; READY = 1; }
+  optional Nested nested = 2;
+  optional State state = 3;
+  optional Other other = 4;
+  extensions 100 to 199;
+}
+
+message Reply { optional string message = 1; }

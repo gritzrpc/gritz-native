@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package reflection_fixture;
+
+import "reflection_types.proto";
+
+extend Request { optional string label = 100; }
+
+service Inspector { rpc Inspect (Request) returns (Reply); }
