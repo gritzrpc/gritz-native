@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+
+- Discover registered RPCs and protobuf types through gRPC Reflection v1 and v1alpha when `reflection` is enabled.
+- Support gritz-core 0.5.0.
+
 ## 0.4.0
 
 - Connect `Gritz::Client` to all four native RPC forms with shared worker-local channels and deferred credentials.

@@ -4,6 +4,9 @@ AllCops:
   CacheRootDirectory: tmp/rubocop
   Exclude:
     - spec/fixtures/**/*_pb.rb
+    - spec/integration/gruf/fixtures/upstream/**/*.rb
+    - spec/integration/gruf/fixtures/migrated/**/*.rb
+    - lib/grpc/reflection/**/*_pb.rb
     - examples/hello/lib/*_pb.rb
     - spikes/**/lib/*_pb.rb
     - spikes/**/*

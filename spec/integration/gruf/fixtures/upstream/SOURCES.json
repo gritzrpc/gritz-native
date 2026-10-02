@@ -1,0 +1,48 @@
+{
+  "gruf_version": "2.22.0",
+  "gruf_commit": "5c843adeeb4f59c0999edee500e024bc69caaf0f",
+  "demo_commit": "4381b12192fdc9e5e00da89c4b1fd41c77857044",
+  "license": "MIT",
+  "files": [
+    {
+      "file": "products_controller.rb",
+      "source": "https://github.com/bigcommerce/gruf-demo/blob/4381b12192fdc9e5e00da89c4b1fd41c77857044/app/rpc/products_controller.rb",
+      "sha256": "e56bc38a1bea8caf41d6d1f4e8e01005ef1af2e98a68078022b853b34ee857f7"
+    },
+    {
+      "file": "product.rb",
+      "source": "https://github.com/bigcommerce/gruf-demo/blob/4381b12192fdc9e5e00da89c4b1fd41c77857044/app/models/product.rb",
+      "sha256": "332573f2ee25313340e61f1770e0ff4c88e371f9b28cd44b54b370ee9b044ef5"
+    },
+    {
+      "file": "application_record.rb",
+      "source": "https://github.com/bigcommerce/gruf-demo/blob/4381b12192fdc9e5e00da89c4b1fd41c77857044/app/models/application_record.rb",
+      "sha256": "715bbe7fd5a8410e011838a9262be1b51c37de39e232c7bef998057c112b2daf"
+    },
+    {
+      "file": "proto/Products.proto",
+      "source": "https://github.com/bigcommerce/gruf-demo/blob/4381b12192fdc9e5e00da89c4b1fd41c77857044/proto/Products.proto",
+      "sha256": "f28b5431171387ef9270d2e9527e60112889a5c11ee11ad240b134c5176ab983"
+    },
+    {
+      "file": "proto/Products_pb.rb",
+      "source": "https://github.com/bigcommerce/gruf-demo/blob/4381b12192fdc9e5e00da89c4b1fd41c77857044/proto/rpc/Products_pb.rb",
+      "sha256": "75eda7090f4c27b3343db4bc63a2afe223287d93721b108f550646309f9856fc"
+    },
+    {
+      "file": "proto/Products_services_pb.rb",
+      "source": "https://github.com/bigcommerce/gruf-demo/blob/4381b12192fdc9e5e00da89c4b1fd41c77857044/proto/rpc/Products_services_pb.rb",
+      "sha256": "05be4e5a15de18a7e5c5d7ad6b5b342652b6760b2cebca4fdb6a1c22d25f13ee"
+    },
+    {
+      "file": "LICENSE.md",
+      "source": "https://github.com/bigcommerce/gruf-demo/blob/4381b12192fdc9e5e00da89c4b1fd41c77857044/LICENSE.md",
+      "sha256": "de302e49a9fe4c66568a29c168d035b07a1e2e2be3ac8f07d92e4ffd064af240"
+    },
+    {
+      "file": "basic.rb",
+      "source": "https://github.com/bigcommerce/gruf/blob/5c843adeeb4f59c0999edee500e024bc69caaf0f/lib/gruf/interceptors/authentication/basic.rb",
+      "sha256": "41782f96ce74de1f47827d457f571cb5a956a06d60d5e25bb559aadd3539f4ff"
+    }
+  ]
+}

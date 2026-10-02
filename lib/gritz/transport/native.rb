@@ -8,7 +8,7 @@ module Gritz
     # Runs generated services through Gritz's transport-independent dispatcher.
     # @api public
     class Native
-      def self.capabilities = Set[:unary, :client_streaming, :server_streaming, :bidi, :reuseport, :health, :tls, :mtls].freeze
+      def self.capabilities = Set[:unary, :client_streaming, :server_streaming, :bidi, :reuseport, :health, :tls, :mtls, :reflection].freeze
 
       def self.prefork
         GRPC.prefork
@@ -49,6 +49,11 @@ module Gritz
         end
         @health = Health.new(@dispatcher.router.routes.values.map(&:service).uniq)
         @server.handle(@health)
+        if @config.reflection
+          require_relative "native/reflection"
+          services = @dispatcher.router.routes.values.map(&:service).uniq + [Health.service_name]
+          Reflection.build(services).each { |service| @server.handle(service) }
+        end
         @port = @server.add_http2_port(listener_spec, credentials)
         raise ArgumentError, "could not bind #{listener_spec}" unless @port.positive?
 
