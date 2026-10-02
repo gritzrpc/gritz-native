@@ -71,6 +71,43 @@ RSpec.describe Gritz::Testing::Server do
     expect(helper.transport.running?).to be false
   end
 
+  it "constructs a custom recorder after boot and closes it after the final observation" do
+    events = []
+    recorder = Gritz::Metrics::Recorder.new
+    config.add_hook(:on_worker_boot) { events << :boot }
+    config.add_hook(:on_worker_shutdown) { events << :shutdown }
+    config.metrics_recorder_factory = lambda { |worker:|
+      expect(worker).to eq(0)
+      expect(events).to eq([:boot])
+      recorder
+    }
+    expect(recorder).to receive(:observe_worker).with(hash_including(state: "stopped")) {
+      expect(events).to eq(%i[boot shutdown])
+      events << :final
+    }
+    expect(recorder).to receive(:close) { |timeout:|
+      expect(timeout).to be_between(0, config.shutdown_timeout)
+      expect(events).to eq(%i[boot shutdown final])
+    }
+    described_class.start(config, logger:) do |server|
+      stub = Helloworld::Greeter::Stub.new(server.address, :this_channel_is_insecure)
+      expect(stub.say_hello(Helloworld::HelloRequest.new).message).to eq("started")
+      expect(recorder.take_delta.fetch(:rpc).first).to include(count: 1, code: 0)
+    end
+  end
+
+  it "still closes a custom recorder when a final observation fails" do
+    recorder = Gritz::Metrics::Recorder.new
+    config.metrics_recorder_factory = ->(**) { recorder }
+    allow(recorder).to receive(:observe_worker).and_raise("observation failed")
+    expect(recorder).to receive(:close).with(timeout: kind_of(Numeric))
+    helper = described_class.start(config, logger:)
+    expect { helper.stop }.to raise_error("observation failed")
+    expect(helper.transport.running?).to be(false)
+  ensure
+    helper&.stop
+  end
+
   it "runs shutdown cleanup when a boot hook fails" do
     events = []
     config.add_hook(:on_worker_boot) do

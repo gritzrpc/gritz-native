@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- Connect `Gritz::Client` to all four native RPC forms with shared worker-local channels and deferred credentials.
+- Cancel unfinished response streams and decode downstream status, trailers and protobuf rich error details into typed Gritz errors.
+- Pass retry and load-balancing service configuration to the native channel.
+- Run installed worker telemetry with real-server test helpers and close it after the final RPC observations.
+
 ## 0.3.0
 
 - Serve TLS and mTLS connections and expose authenticated client certificates to handlers.

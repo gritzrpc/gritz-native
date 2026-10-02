@@ -10,6 +10,10 @@ require "gritz/native"
 
 The entry point loads `gritz-core` and registers `Gritz::Transport::Native`. The configuration value is `transport :native`. Use [gritz](https://github.com/gritzrpc/gritz) for the default combination and executable. The Fiber adapter `gritz-async` is planned separately.
 
+The adapter also connects `Gritz::Client.define` to all four RPC forms, sharing channels within each worker and creating fresh connections after fork. It cancels unfinished streams, decodes rich downstream errors, and passes retry/load-balancing configuration to C-core. See the [client guide](https://github.com/gritzrpc/gritz-core/blob/main/docs/guides/clients.md).
+
+The [three-service integration report](https://github.com/gritzrpc/gritz-otel/blob/main/docs/reports/T4-08-client-chain.md) records worker-local channels, propagated deadlines, connected server/client spans and real OTLP/HTTP metrics.
+
 ```ruby
 Gritz::Testing::Server.start(controllers: [GreeterController]) do |server|
   stub = Helloworld::Greeter::Stub.new(server.address, :this_channel_is_insecure)

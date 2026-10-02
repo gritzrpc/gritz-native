@@ -12,4 +12,7 @@ require_relative "transport/native/call"
 require_relative "transport/native/bridge"
 require_relative "transport/native/server"
 require_relative "transport/native/health"
+require_relative "transport/native/client"
 require_relative "testing/server"
+
+Gritz::Client.adapter = Gritz::Transport::Native::Client

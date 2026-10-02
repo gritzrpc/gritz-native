@@ -39,10 +39,11 @@ module Gritz
         begin
           @config.preload! if @config.preload_app?
           router = Router.new(controllers: @config.controllers, strict: @config.strict_routes, logger: @logger)
-          dispatcher = Dispatcher.new(router:, middleware: @config.middleware, logger: @logger)
-          @transport = Transport::Native.new(config: @config, dispatcher:, logger: @logger)
           @lifecycle_started = true
           @config.run_hooks(:on_worker_boot, 0)
+          @recorder = @config.metrics_recorder_factory&.call(worker: 0)
+          dispatcher = Dispatcher.new(router:, middleware: @config.middleware, logger: @logger, metrics: @recorder)
+          @transport = Transport::Native.new(config: @config, dispatcher:, logger: @logger)
           @port = transport.bind
           @address = @config.bind.sub(/:\d+\z/, ":#{port}")
           transport.start
@@ -63,16 +64,30 @@ module Gritz
         return if @stopped
 
         @stopped = true
+        deadline = monotonic + @config.shutdown_timeout
         begin
           @health_stop&.push(true)
-          if @health_thread && !@health_thread.join(@config.shutdown_timeout)
+          if @health_thread && !@health_thread.join([deadline - monotonic, 0].max)
             @health_thread.kill.join
           end
-          transport&.stop(deadline: Time.now + @config.shutdown_timeout)
+          transport&.stop(deadline: Time.now + [deadline - monotonic, 0].max)
         ensure
-          @config.run_hooks(:on_worker_shutdown, 0) if @lifecycle_started
+          begin
+            @config.run_hooks(:on_worker_shutdown, 0) if @lifecycle_started
+          ensure
+            begin
+              @recorder&.observe_rejected(transport.stats.fetch(:rejected_total, 0)) if transport
+              @recorder&.observe_worker({ pid: Process.pid, index: 0, state: "stopped" })
+            ensure
+              @recorder&.close(timeout: [deadline - monotonic, 0].max)
+            end
+          end
         end
       end
+
+      private
+
+      def monotonic = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
   end
 end
