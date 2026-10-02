@@ -1,6 +1,6 @@
 # Releasing
 
-Each repository builds and publishes its own gem. For v0.1.0, publish in this order:
+Each repository builds and publishes its own gem. Publish coordinated framework versions in this order:
 
 1. [gritz-core](https://github.com/gritzrpc/gritz-core)
 2. [gritz-native](https://github.com/gritzrpc/gritz-native)
@@ -24,7 +24,9 @@ Leave reusable-workflow repository fields empty. No API key is needed. See the [
 
 ## Publish a version
 
-1. Update `lib/gritz/native/version.rb`. Component dependencies currently require the same version; update their gemspec requirements when changing the version policy.
+For a new gem, scaffold it with `bundle gem` and prepare all checks and release files, then stop before the first publication and ask the project owner to release it and configure Trusted Publishing. Initial CHANGELOG notes remain exactly `Initial release.`.
+
+1. Update `lib/gritz/native/version.rb` and the core dependency in `gritz-native.gemspec` to the matching published version.
 2. Record user-visible changes in CHANGELOG. First release notes are exactly `Initial release.`. Documentation, tests, version bumps and tooling alone do not justify a release.
 3. Run `bundle exec rake`, `bundle exec rubocop`, `bundle exec bundler-audit check --update` and `bundle exec rake build`. Commit, push main and wait for CI.
 4. Configure Trusted Publishing for this repository and, if applicable, publish its dependencies first.

@@ -1,0 +1,6 @@
+duration_seconds: 3600
+workers: 4
+clients: 32
+requests_per_second: 100
+sample_interval_seconds: 10
+request_timeout_seconds: 5
