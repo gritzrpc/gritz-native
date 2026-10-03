@@ -22,7 +22,7 @@ begin
 
   changes = %w[rps p50_ns p95_ns].to_h do |metric|
     previous, current = [before, after].map { |result| result.fetch("median").fetch(metric) }
-    degradation = metric == "rps" ? (previous - current) / previous : (current - previous) / previous
+    degradation = metric == "rps" ? (previous - current).fdiv(previous) : (current - previous).fdiv(previous)
     [metric, degradation]
   end
   puts JSON.generate(degradation: changes)

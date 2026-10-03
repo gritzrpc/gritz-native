@@ -1,0 +1,199 @@
+{
+  "schema": 1,
+  "started_at": "2026-10-03T07:39:07Z",
+  "source_commit": "772b430fc5808228bbb6a7f1b6265f660c733d2c",
+  "source_sha256": "e3eafc1d6fcc13b538b06dff803729409efcc4d238ef98390b8dc76a3903e1e1",
+  "scenario": "unary-cpu",
+  "transport": "native",
+  "settings": {
+    "warmup_seconds": 30,
+    "duration_seconds": 60,
+    "repetitions": 3,
+    "workers": 1,
+    "threads": 64,
+    "ghz": {
+      "concurrency": 32,
+      "connections": 32,
+      "timeout": "5s",
+      "duration-stop": "wait"
+    },
+    "call": "helloworld.Greeter/SayHello",
+    "data": "{\"name\":\"cpu\"}",
+    "raw": false,
+    "workload_sha256": "cdbf83a648dd4ee1bd269ae6e5a8e7ce6c210dcf2e999e31a0fc8abcf8b75758"
+  },
+  "environment": {
+    "runner": "colima-arm64-2cpu-1g",
+    "ruby": "ruby 3.4.11 (2026-09-23 revision 592f1ffdb3) +PRISM [aarch64-linux]",
+    "kernel": "6.8.0-117-generic",
+    "cpu_count": 2,
+    "cpu_model": "CPU implementer\t: 0x61",
+    "cpu_limit": "200000 100000",
+    "memory_limit": "1073741824",
+    "ghz": "v0.121.0",
+    "governor": "unavailable"
+  },
+  "gems": {
+    "async": "2.46.0",
+    "async-grpc": "0.10.0",
+    "async-http": "0.105.0",
+    "async-pool": "0.12.0",
+    "base64": "0.3.0",
+    "bigdecimal": "4.1.3",
+    "bundler": "2.6.9",
+    "console": "1.38.0",
+    "fiber-annotation": "0.2.0",
+    "fiber-local": "1.1.0",
+    "fiber-storage": "1.0.1",
+    "fiddle": "1.1.8",
+    "google-protobuf": "4.36.2",
+    "googleapis-common-protos-types": "1.23.0",
+    "gritz-async": "0.1.3",
+    "gritz-core": "0.6.1",
+    "gritz-native": "0.6.1",
+    "grpc": "1.83.0",
+    "io-endpoint": "0.19.0",
+    "io-event": "1.22.1",
+    "io-stream": "0.14.0",
+    "json": "2.21.2",
+    "logger": "1.7.0",
+    "openssl": "4.0.2",
+    "pathname": "0.4.0",
+    "protocol-grpc": "0.17.0",
+    "protocol-hpack": "1.5.1",
+    "protocol-http": "0.72.0",
+    "protocol-http1": "0.41.0",
+    "protocol-http2": "0.29.1",
+    "protocol-url": "0.19.0",
+    "rake": "13.4.2",
+    "zeitwerk": "2.8.3"
+  },
+  "runs": [
+    {
+      "count": 70561,
+      "total": 60004053177,
+      "rps": 1175.9372286378573,
+      "average": 27152369,
+      "latencyDistribution": [
+        {
+          "percentage": 10,
+          "latency": 2463587
+        },
+        {
+          "percentage": 25,
+          "latency": 3226890
+        },
+        {
+          "percentage": 50,
+          "latency": 7241051
+        },
+        {
+          "percentage": 75,
+          "latency": 17622536
+        },
+        {
+          "percentage": 90,
+          "latency": 23435432
+        },
+        {
+          "percentage": 95,
+          "latency": 26363029
+        },
+        {
+          "percentage": 99,
+          "latency": 558739644
+        }
+      ],
+      "statusCodeDistribution": {
+        "OK": 70561
+      },
+      "errorDistribution": {}
+    },
+    {
+      "count": 70660,
+      "total": 60001222640,
+      "rps": 1177.6426694494437,
+      "average": 27114284,
+      "latencyDistribution": [
+        {
+          "percentage": 10,
+          "latency": 2444423
+        },
+        {
+          "percentage": 25,
+          "latency": 3173810
+        },
+        {
+          "percentage": 50,
+          "latency": 6120493
+        },
+        {
+          "percentage": 75,
+          "latency": 15306214
+        },
+        {
+          "percentage": 90,
+          "latency": 23830801
+        },
+        {
+          "percentage": 95,
+          "latency": 26668519
+        },
+        {
+          "percentage": 99,
+          "latency": 550339759
+        }
+      ],
+      "statusCodeDistribution": {
+        "OK": 70660
+      },
+      "errorDistribution": {}
+    }
+  ],
+  "passed": false,
+  "worker_pids": [
+    2526
+  ],
+  "warmup": {
+    "count": 35299,
+    "total": 30001670957,
+    "rps": 1176.5678001932763,
+    "average": 27136638,
+    "latencyDistribution": [
+      {
+        "percentage": 10,
+        "latency": 2438709
+      },
+      {
+        "percentage": 25,
+        "latency": 3149681
+      },
+      {
+        "percentage": 50,
+        "latency": 5275424
+      },
+      {
+        "percentage": 75,
+        "latency": 15058548
+      },
+      {
+        "percentage": 90,
+        "latency": 24662800
+      },
+      {
+        "percentage": 95,
+        "latency": 27546063
+      },
+      {
+        "percentage": 99,
+        "latency": 547909108
+      }
+    ],
+    "statusCodeDistribution": {
+      "OK": 35299
+    },
+    "errorDistribution": {}
+  },
+  "error": "RuntimeError: no successful RPCs",
+  "finished_at": "2026-10-03T07:42:38Z"
+}

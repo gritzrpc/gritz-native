@@ -94,11 +94,11 @@ begin
     raise "ghz failed: #{log}" unless status.success?
 
     result = JSON.parse(File.read(result_path))
-    raise "no successful RPCs" unless result.fetch("count").positive? && result.fetch("statusCodeDistribution").keys == ["OK"]
-    raise "RPC errors: #{result['errorDistribution']}" unless result.fetch("errorDistribution").empty?
-
     summary = result.slice("count", "total", "rps", "average", "latencyDistribution", "statusCodeDistribution", "errorDistribution")
     index.zero? ? report[:warmup] = summary : report[:runs] << summary
+    raise "no successful RPCs" unless result.fetch("count").positive? && result.fetch("statusCodeDistribution").fetch("OK", 0).positive?
+    raise "RPC errors: #{result['errorDistribution']}" unless result.fetch("errorDistribution").empty? && result.fetch("statusCodeDistribution").keys == ["OK"]
+
     File.unlink(result_path)
     puts "#{scenario}/#{options[:transport]}: #{index.zero? ? 'warmup' : "sample #{index}"} #{summary.fetch('rps').round(2)} RPC/s"
     $stdout.flush

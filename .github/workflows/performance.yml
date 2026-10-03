@@ -50,23 +50,29 @@ jobs:
       - name: Measure and reject regressions
         run: |
           mkdir -p tmp/performance
+          failed=0
           for adapter in native async; do
             for scenario in unary-light unary-cpu unary-io server-streaming bidi; do
               if [ "$SCENARIO" != all ] && [ "$SCENARIO" != "$scenario" ]; then continue; fi
               baseline="$BASELINE_DIRECTORY/$adapter-$scenario.json"
               if [ ! -f "$baseline" ] && [ "$INITIALIZE_BASELINE" != true ]; then
                 echo "Missing reviewed baseline: $baseline" >&2
-                exit 1
+                failed=1
+                continue
               fi
-              bundle exec ruby bin/bench "$scenario" --transport "$adapter" \
-                --output "tmp/performance/$adapter-$scenario.json"
+              if ! bundle exec ruby bin/bench "$scenario" --transport "$adapter" \
+                --output "tmp/performance/$adapter-$scenario.json"; then
+                failed=1
+                continue
+              fi
               if [ -f "$baseline" ]; then
-                ruby bench/compare.rb "$baseline" "tmp/performance/$adapter-$scenario.json"
+                if ! ruby bench/compare.rb "$baseline" "tmp/performance/$adapter-$scenario.json"; then failed=1; fi
               else
                 cp "tmp/performance/$adapter-$scenario.json" "$baseline"
               fi
             done
           done
+          test "$failed" -eq 0
       - uses: actions/upload-artifact@v4
         if: always()
         with:

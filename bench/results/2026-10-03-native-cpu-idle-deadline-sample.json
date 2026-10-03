@@ -1,0 +1,53 @@
+{
+  "count": 70448,
+  "total": 60000732626,
+  "rps": 1174.118996831597,
+  "average": 27196276,
+  "fastest": 1042603,
+  "slowest": 4228963249,
+  "latencyDistribution": [
+    {
+      "percentage": 10,
+      "latency": 2441217
+    },
+    {
+      "percentage": 25,
+      "latency": 3120772
+    },
+    {
+      "percentage": 50,
+      "latency": 4744262
+    },
+    {
+      "percentage": 75,
+      "latency": 12026247
+    },
+    {
+      "percentage": 90,
+      "latency": 21689185
+    },
+    {
+      "percentage": 95,
+      "latency": 26869587
+    },
+    {
+      "percentage": 99,
+      "latency": 587709783
+    }
+  ],
+  "statusCodeDistribution": {
+    "DeadlineExceeded": 1,
+    "OK": 70447
+  },
+  "errorDistribution": {
+    "rpc error: code = DeadlineExceeded desc = context deadline exceeded": 1
+  },
+  "failed_calls": [
+    {
+      "timestamp": "2026-10-03T07:41:58.902890755Z",
+      "latency": 5000188004,
+      "error": "rpc error: code = DeadlineExceeded desc = context deadline exceeded",
+      "status": "DeadlineExceeded"
+    }
+  ]
+}
