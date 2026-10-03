@@ -1,0 +1,87 @@
+{
+  "kind": "short-cancellation-diagnostic",
+  "fixed_runner": false,
+  "requests_per_variant": 6000,
+  "threads": 8,
+  "runs": [
+    {
+      "platform": "aarch64-linux",
+      "ruby": "3.4.11",
+      "grpc": "1.84.0",
+      "baseline": true,
+      "samples": [
+        {
+          "p50_ns": 183005,
+          "allocations_per_rpc": 138.016
+        },
+        {
+          "p50_ns": 179047,
+          "allocations_per_rpc": 138.0185
+        },
+        {
+          "p50_ns": 205881,
+          "allocations_per_rpc": 138.0185
+        }
+      ],
+      "fixed_runner": false,
+      "note": "Sequential short probe on shared VM; not a fixed-runner performance target verification.",
+      "variant": "before"
+    },
+    {
+      "platform": "aarch64-linux",
+      "ruby": "3.4.11",
+      "grpc": "1.84.0",
+      "baseline": false,
+      "samples": [
+        {
+          "p50_ns": 219380,
+          "allocations_per_rpc": 193.9785
+        },
+        {
+          "p50_ns": 196005,
+          "allocations_per_rpc": 193.975
+        },
+        {
+          "p50_ns": 186671,
+          "allocations_per_rpc": 193.962
+        }
+      ],
+      "fixed_runner": false,
+      "note": "Sequential short probe on shared VM; not a fixed-runner performance target verification.",
+      "variant": "after"
+    },
+    {
+      "platform": "aarch64-linux",
+      "ruby": "3.4.11",
+      "grpc": "1.84.0",
+      "baseline": false,
+      "samples": [
+        {
+          "p50_ns": 227588,
+          "allocations_per_rpc": 193.028
+        },
+        {
+          "p50_ns": 227588,
+          "allocations_per_rpc": 193.025
+        },
+        {
+          "p50_ns": 231130,
+          "allocations_per_rpc": 193.0115
+        }
+      ],
+      "fixed_runner": false,
+      "note": "Sequential short probe on shared VM; not a fixed-runner performance target verification.",
+      "variant": "after-optimized"
+    }
+  ],
+  "limitations": [
+    "Shared Colima VM with unrelated workloads; not a Phase 6 fixed-runner measurement.",
+    "Prior +3.70% overhead does not validate this cancellation implementation.",
+    "An initial baseline probe with threads=1 hit RESOURCE_EXHAUSTED; all retained variants use threads=8 and completed without errors."
+  ],
+  "probe_source": "# frozen_string_literal: true\nrequire 'json'\nrequire 'gritz/native'\nrequire_relative '../spec/fixtures/hello/hello_services_pb'\nif ENV['PROBE_BASELINE'] == '1'\n  Gritz::Transport::Native::Cancellation.send(:remove_const, :Descriptor)\n  Gritz::Transport::Native::Cancellation.const_set(:Descriptor, GRPC::RpcDesc)\nend\ncontroller = Class.new(Gritz::Controller) do\n  bind Helloworld::Greeter::Service\n  def say_hello = Helloworld::HelloReply.new(message: 'ok')\nend\nconfig = Gritz::Configuration.new\nconfig.bind = '127.0.0.1:0'\nconfig.threads = 8\nsamples = []\nGritz::Testing::Server.start(config, controllers: [controller]) do |server|\n  stub = Helloworld::Greeter::Stub.new(server.address, :this_channel_is_insecure)\n  request = Helloworld::HelloRequest.new\n  200.times { stub.say_hello(request) }\n  3.times do\n    GC.start\n    allocations = GC.stat(:total_allocated_objects)\n    latencies = Array.new(2000) do\n      started = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)\n      raise 'unexpected response' unless stub.say_hello(request).message == 'ok'\n      Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond) - started\n    end\n    samples << { p50_ns: latencies.sort[1000], allocations_per_rpc: (GC.stat(:total_allocated_objects) - allocations) / 2000.0 }\n  end\nend\nreport = { platform: RUBY_PLATFORM, ruby: RUBY_VERSION, grpc: Gem.loaded_specs.fetch('grpc').version.to_s, baseline: ENV['PROBE_BASELINE'] == '1', samples: samples, fixed_runner: false, note: 'Sequential short probe on shared VM; not a fixed-runner performance target verification.' }\nFile.write(ARGV.fetch(0), JSON.pretty_generate(report) + \"\\n\")\nputs JSON.generate(report)\n",
+  "source_sha256": {
+    "gritz-native/lib/gritz/transport/native/cancellation.rb": "6ae249a2dc3b2af40d7be6c12e9caf21788ce785fc5df98be96183ffdedecef3",
+    "gritz-native/lib/gritz/transport/native/bridge.rb": "5552306011c3d0b78aef47eb1237ed1113e251f6ef1ff3f1e6ef513d8935dd1e"
+  }
+}

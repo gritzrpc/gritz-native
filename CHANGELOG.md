@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.1
+
+- Observe client cancellation while unary and streaming controllers are running, so `Context#check_cancelled!` releases the occupied pool slot.
+- Release close observers during normal responses, errors and shutdown without reporting successful calls as cancelled.
+- Cancellation observation adds a short-lived thread per admitted application RPC; fixed-runner overhead validation remains pending.
+- Require Gritz Core 0.9.1 for operational commands and corrected master readiness timeouts.
+
 ## 0.9.0
 
 - Require Gritz Core 0.9.0 for startup TLS-file validation and the stabilization support policy.

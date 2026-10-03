@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "cancellation"
+
 module Gritz
   module Transport
     class Native
@@ -10,6 +12,8 @@ module Gritz
           Class.new(service_class) do
             self.service_name = service_class.service_name
             descriptors.each do |descriptor|
+              rpc_name = descriptor.name.to_sym
+              rpc_descs[rpc_name] = Cancellation::Descriptor.new(*rpc_descs.fetch(rpc_name).to_a)
               case descriptor.kind
               when :client_streaming
                 define_method(descriptor.action) do |view|
