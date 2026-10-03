@@ -15,6 +15,8 @@ The first dispatch explicitly initializes missing baselines in the persistent ba
 
 Use the runner only for the main-branch performance workflow, which requests read-only repository permissions. Keep runner credentials in its Docker volume, registration tokens in memory/stdin, and the host Docker socket and workspace out of the container. The container exposes no host ports. The repository registration does not require extra organization administration privileges.
 
+The current Colima VM is shared with other projects, whose containers are stopped only for this owner-authorized measurement session and restored afterward. Scheduled jobs require `BENCH_RUNNER_ISOLATED=true`; keep it unset while this VM is shared. Manual comparisons remain available after arranging an idle VM. Move the runner to a dedicated VM or machine before enabling nightly measurements. The workflow has neither permission nor a mounted socket to stop unrelated containers itself.
+
 ## Performance targets
 
 This environment supplies reproducible resource limits and an actual CI execution path. The framework p50 overhead and worker-scaling targets still require measurement; successful runner registration or short smoke tests do not establish them. Record any unmet target and its remedy separately after the full runs.

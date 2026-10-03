@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   benchmark:
-    if: ${{ github.ref == 'refs/heads/main' && vars.BENCH_RUNNER_LABEL != '' }}
+    if: ${{ github.ref == 'refs/heads/main' && vars.BENCH_RUNNER_LABEL != '' && (github.event_name != 'schedule' || vars.BENCH_RUNNER_ISOLATED == 'true') }}
     runs-on: [self-hosted, Linux, '${{ vars.BENCH_RUNNER_LABEL }}']
     timeout-minutes: 60
     env:
