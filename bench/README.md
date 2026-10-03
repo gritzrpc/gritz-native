@@ -1,4 +1,39 @@
-# Multiprocess soak
+# Performance and reliability checks
+
+## Repeatable performance scenarios
+
+`bin/bench` runs the unary light, CPU, I/O-wait, server-streaming and bidi workloads from `scenarios/performance.yml`. Each full run warms up for 30 seconds, then measures three 60-second samples and retains the median throughput, p50 and p95 in `results/<date>_<commit>_<adapter>_<scenario>.json`. Warmup and measured summaries include RPC status and error counts. Failed or incomplete runs fail the command and retain their report. Every configured worker must handle requests.
+
+Install the pinned ghz 0.121.0 using `.devcontainer/install-tools.sh`, which checks its published SHA256. Use the benchmark-only bundle to load both adapters without adding Async to the Native Gem:
+
+```sh
+BUNDLE_GEMFILE=bench/Gemfile bundle install
+BUNDLE_GEMFILE=bench/Gemfile bundle exec ruby bin/bench unary-light --runner dedicated-arm64
+BUNDLE_GEMFILE=bench/Gemfile bundle exec ruby bin/bench unary-io --transport async --runner dedicated-arm64
+BUNDLE_GEMFILE=bench/Gemfile bundle exec ruby bin/bench unary-cpu --workers 2 --runner dedicated-arm64
+BUNDLE_GEMFILE=bench/Gemfile bundle exec ruby bin/bench unary-overhead --workers 0 --runner dedicated-arm64
+BUNDLE_GEMFILE=bench/Gemfile bundle exec ruby bin/bench unary-overhead --raw --runner dedicated-arm64
+ruby bench/compare.rb previous.json current.json
+```
+
+`unary-overhead` fixes offered load at 1,000 RPC/s; `--raw` uses the same handler on `GRPC::RpcServer` without the framework. Other workloads measure saturation throughput. Results include source fingerprints, runner identity, Ruby, kernel, CPU and cgroup limits, CPU governor and ghz version. Compare runs on the same idle runner with the same settings. A throughput decrease or p50/p95 increase of at least 10% fails comparison. Failed runs, invalid metrics or changed environments fail rather than silently passing.
+
+`--smoke` uses one second of warmup and one two-second sample. It checks execution only and cannot be compared to the full-run baseline. Main CI exercises the comparison boundary and failed-run cleanup tests on all supported Rubies, and runs the five Native smoke scenarios on Ruby 3.4.
+
+The nightly `Performance` workflow requires a dedicated Linux runner with Ruby 3.4, ghz 0.121.0, the performance CPU governor and no competing workloads. Set repository variables `BENCH_RUNNER_LABEL` to its unique runner label and `BENCH_BASELINE_DIRECTORY` to an absolute directory on that runner containing reviewed full-run `native-<scenario>.json` and `async-<scenario>.json` baselines. The workflow requires those baselines and rejects regressions; it uploads results even on failure. Leave the label unset until that runner exists. Container measurements with an unavailable governor are recorded as local evidence, not dedicated-runner acceptance.
+
+## Chaos
+
+Run only in an isolated Linux container with its own network namespace and `CAP_NET_ADMIN`, with `tc` installed. Keep the container memory bounded (the retained run used two CPUs and 1GiB). The scenario kills five randomly chosen workers with a fixed seed under live RPC traffic, checks recovery after each kill, adds 25ms loopback delay with `tc netem`, verifies 50 delayed RPCs, removes the qdisc, and allocates 96MiB in one worker to exercise the 120MiB RSS recycling limit.
+
+```sh
+BUNDLE_GEMFILE=bench/Gemfile bundle exec ruby bench/chaos.rb --output tmp/native-chaos.json
+BUNDLE_GEMFILE=bench/Gemfile bundle exec ruby bench/chaos.rb --transport async --output tmp/async-chaos.json
+```
+
+Pass criteria are successful post-fault responses, correct payloads, recovery within 15 seconds, retired-process reaping, successful cluster shutdown and restored networking. Abrupt `SIGKILL` may abort an in-flight RPC; those failures are counted and retained, and are not described as zero-error graceful restart results. Failure-path tests verify evidence retention and cluster cleanup when `tc` is unavailable.
+
+## Multiprocess soak
 
 Run on Linux with the development bundle installed:
 

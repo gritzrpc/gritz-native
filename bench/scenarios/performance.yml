@@ -1,0 +1,30 @@
+warmup_seconds: 30
+duration_seconds: 60
+repetitions: 3
+workers: 1
+threads: 64
+ghz:
+  concurrency: 32
+  connections: 32
+  timeout: 5s
+  duration-stop: wait
+scenarios:
+  unary-overhead:
+    call: helloworld.Greeter/SayHello
+    data: '{"name":"light"}'
+    rps: 1000
+  unary-light:
+    call: helloworld.Greeter/SayHello
+    data: '{"name":"light"}'
+  unary-cpu:
+    call: helloworld.Greeter/SayHello
+    data: '{"name":"cpu"}'
+  unary-io:
+    call: helloworld.Greeter/SayHello
+    data: '{"name":"io"}'
+  server-streaming:
+    call: helloworld.Greeter/ListGreetings
+    data: '{"name":"light"}'
+  bidi:
+    call: helloworld.Greeter/Chat
+    data: '[{"name":"one"},{"name":"two"},{"name":"three"}]'

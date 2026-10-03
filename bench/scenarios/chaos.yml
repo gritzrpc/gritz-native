@@ -1,0 +1,8 @@
+workers: 4
+threads: 16
+random_seed: 42
+random_kills: 5
+recovery_timeout_seconds: 15
+network_delay_ms: 25
+network_requests: 50
+memory_limit_mb: 120

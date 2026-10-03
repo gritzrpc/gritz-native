@@ -1,0 +1,158 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "digest"
+require "etc"
+require "fileutils"
+require "json"
+require "open3"
+require "optparse"
+require "socket"
+require "time"
+require "timeout"
+require "yaml"
+require "gritz/core"
+
+root = File.expand_path("..", __dir__)
+options = { transport: "native", ghz: "ghz", runner: ENV.fetch("BENCH_RUNNER_ID", "local") }
+OptionParser.new do |parser|
+  parser.banner = "Usage: bundle exec ruby bin/bench SCENARIO [options]"
+  %i[transport ghz runner output baseline].each { |key| parser.on("--#{key} VALUE") { |value| options[key] = value } }
+  parser.on("--workers N", Integer) { |value| options[:workers] = value }
+  parser.on("--raw") { options[:raw] = true }
+  parser.on("--smoke") { options[:smoke] = true }
+end.parse!
+abort "Linux is required" unless RUBY_PLATFORM.include?("linux")
+abort "transport must be native or async" unless %w[native async].include?(options[:transport])
+abort "raw comparison requires native" if options[:raw] && options[:transport] != "native"
+scenario = ARGV.shift
+settings = YAML.safe_load_file(File.join(root, "bench/scenarios/performance.yml"))
+workload = settings.fetch("scenarios").fetch(scenario) { abort "Unknown benchmark scenario: #{scenario}" }
+settings.delete("scenarios")
+settings.merge!(workload)
+settings["workers"] = options[:workers] if options.key?(:workers)
+settings.merge!("warmup_seconds" => 1, "duration_seconds" => 2, "repetitions" => 1) if options[:smoke]
+abort "workers must be nonnegative" unless settings.fetch("workers") >= 0
+abort "raw comparison runs without worker processes" if options[:raw] && options[:workers].to_i.positive?
+settings["workers"] = 0 if options[:raw]
+settings["raw"] = options[:raw] == true
+ghz_version, ghz_status = Open3.capture2e(options[:ghz], "--version")
+abort "ghz version check failed" unless ghz_status.success?
+sha, git_status = Open3.capture2("git", "-C", root, "rev-parse", "HEAD")
+abort "source commit check failed" unless git_status.success?
+environment = { runner: options[:runner], ruby: RUBY_DESCRIPTION, kernel: `uname -r`.strip,
+                cpu_count: Etc.nprocessors, cpu_model: File.read("/proc/cpuinfo")[/^(?:model name|CPU implementer).*$/, 0],
+                cpu_limit: File.read("/sys/fs/cgroup/cpu.max").strip, memory_limit: File.read("/sys/fs/cgroup/memory.max").strip,
+                ghz: ghz_version.strip }
+governor = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
+environment[:governor] = File.exist?(governor) ? File.read(governor).strip : "unavailable"
+sources = Dir[File.join(root, "{lib,bench,bin}/**/*")].select { |path| File.file?(path) && !path.include?("/results/") }.sort
+report = { schema: 1, started_at: Time.now.utc.iso8601, source_commit: sha.strip,
+           source_sha256: Digest::SHA256.hexdigest(sources.map { |path| File.binread(path) }.join),
+           scenario:, transport: options[:transport], settings:, environment:, runs: [], passed: false }
+filename = "#{Time.now.utc.strftime('%Y-%m-%d_%H%M%S')}_#{sha.strip[0, 7]}_#{options[:transport]}_#{scenario}.json"
+output = options[:output] || File.join(root, "bench/results", filename)
+FileUtils.mkdir_p(File.dirname(output))
+listener = TCPServer.new("127.0.0.1", 0)
+address = "127.0.0.1:#{listener.addr[1]}"
+listener.close
+env = { "BENCH_BIND" => address, "BENCH_TRANSPORT" => options[:transport],
+        "BENCH_WORKERS" => settings.fetch("workers").to_s, "BENCH_THREADS" => settings.fetch("threads").to_s,
+        "GRITZ_ADMIN_BIND" => "127.0.0.1:0" }
+server_path = File.join(root, "bench/server.rb")
+settings["workload_sha256"] = Digest::SHA256.hexdigest(File.binread(server_path) + File.binread(File.join(root, "spec/fixtures/hello/hello.proto")))
+raw_log = "#{output}.server.log"
+begin
+  if options[:raw]
+    raw_pid = Process.spawn(env.merge("BENCH_RAW" => "1"), RbConfig.ruby, server_path, out: raw_log, err: raw_log)
+    Timeout.timeout(10) do
+      loop do
+        raise "raw server exited: #{File.read(raw_log)}" if Process.waitpid(raw_pid, Process::WNOHANG)
+
+        begin
+          TCPSocket.new("127.0.0.1", address.split(":").last).close
+          break
+        rescue Errno::ECONNREFUSED
+          sleep 0.01
+        end
+      end
+    end
+  else
+    cluster = Gritz::Testing::Cluster.new(config_path: server_path, env:)
+    cluster.start.wait_until(workers: [settings.fetch("workers"), 1].max, timeout: 30)
+    report[:worker_pids] = cluster.workers.map { |worker| worker[:pid] }
+  end
+  args = [options[:ghz], "--insecure", "--proto=#{File.join(root, 'spec/fixtures/hello/hello.proto')}",
+          "--call=#{settings.fetch('call')}", "--data=#{settings.fetch('data')}", "--format=json"]
+  args.concat(settings.fetch("ghz").map { |key, value| "--#{key}=#{value}" })
+  args << "--rps=#{settings['rps']}" if settings["rps"]
+  ([settings.fetch("warmup_seconds")] + Array.new(settings.fetch("repetitions"), settings.fetch("duration_seconds"))).each_with_index do |duration, index|
+    result_path = "#{output}.#{index}.ghz.json"
+    log, status = Open3.capture2e(*args, "--duration=#{duration}s", "--output=#{result_path}", address)
+    raise "ghz failed: #{log}" unless status.success?
+
+    result = JSON.parse(File.read(result_path))
+    raise "no successful RPCs" unless result.fetch("count").positive? && result.fetch("statusCodeDistribution").keys == ["OK"]
+    raise "RPC errors: #{result['errorDistribution']}" unless result.fetch("errorDistribution").empty?
+
+    summary = result.slice("count", "total", "rps", "average", "latencyDistribution", "statusCodeDistribution", "errorDistribution")
+    index.zero? ? report[:warmup] = summary : report[:runs] << summary
+    File.unlink(result_path)
+    puts "#{scenario}/#{options[:transport]}: #{index.zero? ? 'warmup' : "sample #{index}"} #{summary.fetch('rps').round(2)} RPC/s"
+    $stdout.flush
+    # ghz includes individual RPC details; retain only summaries between samples.
+    result.clear
+    GC.start
+  end
+  report[:median] = %w[rps p50_ns p95_ns].to_h do |metric|
+    values = report[:runs].map do |result|
+      metric == "rps" ? result.fetch("rps") : result.fetch("latencyDistribution").find { |row| row.fetch("percentage") == metric[1, 2].to_i }.fetch("latency")
+    end.sort
+    [metric, values.fetch(values.size / 2)]
+  end
+  if cluster
+    cluster.wait_until(workers: [settings.fetch("workers"), 1].max) do |snapshot|
+      snapshot[:workers].all? { |worker| worker.fetch(:requests_total, 0).positive? }
+    end
+    report[:requests_by_worker] = cluster.workers.to_h { |worker| [worker[:pid], worker[:requests_total]] }
+    started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    cluster.stop
+    report[:idle_shutdown_seconds] = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
+    raise "server shutdown failed" unless cluster.wait.success?
+
+    report.fetch(:worker_pids).each do |pid|
+      Process.kill(0, pid)
+      raise "worker #{pid} was not reaped"
+    rescue Errno::ESRCH
+      next
+    end
+  end
+  report[:passed] = true
+rescue StandardError => e
+  report[:error] = "#{e.class}: #{e.message}"
+  warn report[:error]
+ensure
+  begin
+    cluster&.stop
+    if raw_pid
+      Process.kill("TERM", raw_pid)
+      Timeout.timeout(10) { Process.waitpid(raw_pid) }
+    end
+  rescue Errno::ESRCH, Errno::ECHILD
+    # The owned process has already exited.
+  rescue Timeout::Error
+    Process.kill("KILL", raw_pid)
+    Process.waitpid(raw_pid)
+    report[:passed] = false
+    report[:error] = "raw server did not shut down"
+  ensure
+    File.write("#{output}.server.log", cluster.logs) if cluster && !report[:passed]
+    report[:finished_at] = Time.now.utc.iso8601
+    File.write(output, "#{JSON.pretty_generate(report)}\n")
+  end
+end
+abort "Benchmark failed: #{output}" unless report[:passed]
+puts output
+if options[:baseline] && !system(RbConfig.ruby, File.join(root, "bench/compare.rb"), options[:baseline], output)
+  exit 1
+end

@@ -1,0 +1,54 @@
+name: Performance
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 3 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: performance
+  cancel-in-progress: false
+
+jobs:
+  benchmark:
+    if: ${{ vars.BENCH_RUNNER_LABEL != '' }}
+    runs-on: [self-hosted, Linux, '${{ vars.BENCH_RUNNER_LABEL }}']
+    timeout-minutes: 60
+    env:
+      BUNDLE_GEMFILE: bench/Gemfile
+      BENCH_RUNNER_ID: '${{ vars.BENCH_RUNNER_LABEL }}'
+      BASELINE_DIRECTORY: '${{ vars.BENCH_BASELINE_DIRECTORY }}'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+      - name: Verify fixed runner prerequisites
+        run: |
+          test -n "$BASELINE_DIRECTORY"
+          ghz --version
+          test "$(ghz --version 2>&1)" = 'v0.121.0'
+          governor=/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+          test "$(cat "$governor")" = performance
+      - name: Measure and reject regressions
+        run: |
+          mkdir -p tmp/performance
+          for adapter in native async; do
+            for scenario in unary-light unary-cpu unary-io server-streaming bidi; do
+              bundle exec ruby bin/bench "$scenario" --transport "$adapter" \
+                --output "tmp/performance/$adapter-$scenario.json" \
+                --baseline "$BASELINE_DIRECTORY/$adapter-$scenario.json"
+            done
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-${{ github.sha }}
+          path: tmp/performance/
+          if-no-files-found: error

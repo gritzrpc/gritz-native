@@ -1,0 +1,108 @@
+{
+  "started_at": "2026-10-03T03:38:06Z",
+  "ruby": "ruby 3.4.11 (2026-09-23 revision 592f1ffdb3) +PRISM [aarch64-linux]",
+  "transport": "async",
+  "settings": {
+    "workers": 4,
+    "threads": 16,
+    "random_seed": 42,
+    "random_kills": 5,
+    "recovery_timeout_seconds": 15,
+    "network_delay_ms": 25,
+    "network_requests": 50,
+    "memory_limit_mb": 120
+  },
+  "events": [
+    {
+      "type": "random_kill",
+      "pid": 590,
+      "recovery_seconds": 0.0075531849870458245
+    },
+    {
+      "type": "random_kill",
+      "pid": 611,
+      "recovery_seconds": 0.0024702169466763735
+    },
+    {
+      "type": "random_kill",
+      "pid": 584,
+      "recovery_seconds": 0.0027949100476689637
+    },
+    {
+      "type": "random_kill",
+      "pid": 615,
+      "recovery_seconds": 0.0025180900120176375
+    },
+    {
+      "type": "random_kill",
+      "pid": 619,
+      "recovery_seconds": 0.0022533939918503165
+    },
+    {
+      "type": "network_delay",
+      "qdisc": "qdisc netem 8002: root refcnt 2 limit 1000 delay 25ms seed 14902414061464681674\n Sent 449048 bytes 4658 pkt (dropped 0, overlimits 0 requeues 0) \n backlog 777b 10p requeues 0\n",
+      "successful_requests": 50,
+      "seconds": 7.614872909034602
+    },
+    {
+      "type": "memory_pressure",
+      "allocated_mb": 96,
+      "replaced_pids": [
+        623
+      ]
+    }
+  ],
+  "passed": true,
+  "master_pid": 580,
+  "initial_worker_pids": [
+    584,
+    587,
+    590,
+    596
+  ],
+  "memory_before": [
+    {
+      "pid": 587,
+      "rss_bytes": 34701312,
+      "pss_bytes": 12445696
+    },
+    {
+      "pid": 596,
+      "rss_bytes": 34648064,
+      "pss_bytes": 12335104
+    },
+    {
+      "pid": 623,
+      "rss_bytes": 35049472,
+      "pss_bytes": 12657664
+    },
+    {
+      "pid": 627,
+      "rss_bytes": 33443840,
+      "pss_bytes": 9833472
+    }
+  ],
+  "retired_worker_pids": [
+    590,
+    611,
+    584,
+    615,
+    619,
+    623
+  ],
+  "final_worker_pids": [
+    587,
+    596,
+    627,
+    643
+  ],
+  "network_restored": true,
+  "load": {
+    "requests": 184,
+    "errors": 0,
+    "corrupt_responses": 0,
+    "recovered_requests": 5,
+    "error_examples": []
+  },
+  "finished_at": "2026-10-03T03:38:16Z"
+}
