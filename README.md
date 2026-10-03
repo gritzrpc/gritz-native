@@ -38,6 +38,10 @@ bundle exec rake build
 
 Integration tests contain their own protobuf fixtures and exercise all four RPC forms over real sockets. The [Linux devcontainer](.devcontainer/devcontainer.json) includes grpcurl and ghz. For local core changes, use the Bundler override in [CONTRIBUTING.md](CONTRIBUTING.md). See [SECURITY.md](SECURITY.md) and the [release guide](docs/guides/releasing.md).
 
+## Documentation
+
+Read the [published guides and API reference](https://gritzrpc.github.io/gritz/), [public API policy](https://github.com/gritzrpc/gritz/blob/main/docs/public-api.md), [support policy](https://github.com/gritzrpc/gritz/blob/main/docs/support-policy.md) and [stabilization gate](https://github.com/gritzrpc/gritz/blob/main/docs/stabilization.md).
+
 ## License
 
 [MIT](LICENSE.txt).

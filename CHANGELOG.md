@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.0
+
+- Require Gritz Core 0.9.0 for startup TLS-file validation and the stabilization support policy.
+
 ## 0.6.1
 
 - Use gritz-core 0.6.1 to avoid formatting suppressed RPC completion logs.

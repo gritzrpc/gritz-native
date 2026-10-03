@@ -13,7 +13,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
+    name: Ruby ${{ matrix.ruby }} / grpc ${{ matrix.grpc }}
     strategy:
       fail-fast: false
       matrix:
@@ -21,6 +21,10 @@ jobs:
           - '3.3'
           - '3.4'
           - '4.0'
+        grpc: ['= 1.83.0', '>= 1.83.0']
+
+    env:
+      GRPC_VERSION: ${{ matrix.grpc }}
 
     steps:
       - uses: actions/checkout@v6
