@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+- Support gritz-core 0.6.0 and its shared real-server helper, preserving `Gritz::Testing::Server` and Native RPC behavior.
+
 ## 0.5.0
 
 - Discover registered RPCs and protobuf types through gRPC Reflection v1 and v1alpha when `reflection` is enabled.

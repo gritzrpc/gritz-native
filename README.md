@@ -8,7 +8,7 @@ Requires CRuby 3.3 or later and grpc 1.83 or later. Linux and macOS are tested.
 require "gritz/native"
 ```
 
-The entry point loads `gritz-core` and registers `Gritz::Transport::Native`. The configuration value is `transport :native`. Use [gritz](https://github.com/gritzrpc/gritz) for the default combination and executable. The Fiber adapter `gritz-async` is planned separately.
+The entry point loads `gritz-core` and registers `Gritz::Transport::Native`. The configuration value is `transport :native`. Use [gritz](https://github.com/gritzrpc/gritz) for the default combination and executable. The experimental [gritz-async](https://github.com/gritzrpc/gritz-async) adapter provides Fiber execution and inherited listeners separately.
 
 The adapter also connects `Gritz::Client.define` to all four RPC forms, sharing channels within each worker and creating fresh connections after fork. It cancels unfinished streams, decodes rich downstream errors, and passes retry/load-balancing configuration to C-core. See the [client guide](https://github.com/gritzrpc/gritz-core/blob/main/docs/guides/clients.md).
 

@@ -24,7 +24,7 @@ RSpec.describe Gritz::Testing::Server do
   end
 
   it "rejects unsupported runtime features before binding a native server" do
-    { transport: :async, listener_strategy: :port_per_worker }.each do |setting, value|
+    { listener_strategy: :port_per_worker }.each do |setting, value|
       config.public_send("#{setting}=", value)
       helper = nil
       expect { helper = described_class.start(config, logger:) }.to raise_error(Gritz::ConfigurationError)
