@@ -25,17 +25,16 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.4'
-          bundler-cache: true
       - name: Verify fixed runner prerequisites
         run: |
           test -n "$BASELINE_DIRECTORY"
+          ruby -e 'abort "Ruby 3.4 is required" unless RUBY_VERSION.start_with?("3.4.")'
           ghz --version
           test "$(ghz --version 2>&1)" = 'v0.121.0'
-          governor=/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-          test "$(cat "$governor")" = performance
+          test "$(cat /sys/fs/cgroup/cpu.max)" = '200000 100000'
+          test "$(cat /sys/fs/cgroup/memory.max)" = '1073741824'
+      - name: Install benchmark bundle
+        run: bundle install
       - name: Measure and reject regressions
         run: |
           mkdir -p tmp/performance

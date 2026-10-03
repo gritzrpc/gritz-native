@@ -40,9 +40,10 @@ ghz_version, ghz_status = Open3.capture2e(options[:ghz], "--version")
 abort "ghz version check failed" unless ghz_status.success?
 sha, git_status = Open3.capture2("git", "-C", root, "rev-parse", "HEAD")
 abort "source commit check failed" unless git_status.success?
+read_limit = ->(path) { File.exist?(path) ? File.read(path).strip : "unavailable" }
 environment = { runner: options[:runner], ruby: RUBY_DESCRIPTION, kernel: `uname -r`.strip,
                 cpu_count: Etc.nprocessors, cpu_model: File.read("/proc/cpuinfo")[/^(?:model name|CPU implementer).*$/, 0],
-                cpu_limit: File.read("/sys/fs/cgroup/cpu.max").strip, memory_limit: File.read("/sys/fs/cgroup/memory.max").strip,
+                cpu_limit: read_limit.call("/sys/fs/cgroup/cpu.max"), memory_limit: read_limit.call("/sys/fs/cgroup/memory.max"),
                 ghz: ghz_version.strip }
 governor = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 environment[:governor] = File.exist?(governor) ? File.read(governor).strip : "unavailable"
