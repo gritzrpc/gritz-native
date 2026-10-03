@@ -1,0 +1,247 @@
+{
+  "schema": 1,
+  "started_at": "2026-10-03T07:57:31Z",
+  "source_commit": "75e44e7c486d1bf17ea6de30a96ff40ad08b8084",
+  "source_sha256": "a900e3ad73bb42325a8709cd9c724782023d1cc261f738ef5a4b418b7c928ac4",
+  "scenario": "server-streaming",
+  "transport": "native",
+  "settings": {
+    "warmup_seconds": 30,
+    "duration_seconds": 60,
+    "repetitions": 3,
+    "workers": 1,
+    "threads": 64,
+    "ghz": {
+      "concurrency": 32,
+      "connections": 32,
+      "timeout": "5s",
+      "duration-stop": "wait"
+    },
+    "call": "helloworld.Greeter/ListGreetings",
+    "data": "{\"name\":\"light\"}",
+    "raw": false,
+    "workload_sha256": "cdbf83a648dd4ee1bd269ae6e5a8e7ce6c210dcf2e999e31a0fc8abcf8b75758"
+  },
+  "environment": {
+    "runner": "colima-arm64-2cpu-1g",
+    "ruby": "ruby 3.4.11 (2026-09-23 revision 592f1ffdb3) +PRISM [aarch64-linux]",
+    "kernel": "6.8.0-117-generic",
+    "cpu_count": 2,
+    "cpu_model": "CPU implementer\t: 0x61",
+    "cpu_limit": "200000 100000",
+    "memory_limit": "1073741824",
+    "ghz": "v0.121.0",
+    "governor": "unavailable"
+  },
+  "gems": {
+    "async": "2.46.0",
+    "async-grpc": "0.10.0",
+    "async-http": "0.105.0",
+    "async-pool": "0.12.0",
+    "base64": "0.3.0",
+    "bigdecimal": "4.1.3",
+    "bundler": "2.6.9",
+    "console": "1.38.0",
+    "fiber-annotation": "0.2.0",
+    "fiber-local": "1.1.0",
+    "fiber-storage": "1.0.1",
+    "fiddle": "1.1.8",
+    "google-protobuf": "4.36.2",
+    "googleapis-common-protos-types": "1.23.0",
+    "gritz-async": "0.1.3",
+    "gritz-core": "0.6.1",
+    "gritz-native": "0.6.1",
+    "grpc": "1.83.0",
+    "io-endpoint": "0.19.0",
+    "io-event": "1.22.1",
+    "io-stream": "0.14.0",
+    "json": "2.21.2",
+    "logger": "1.7.0",
+    "openssl": "4.0.2",
+    "pathname": "0.4.0",
+    "protocol-grpc": "0.17.0",
+    "protocol-hpack": "1.5.1",
+    "protocol-http": "0.72.0",
+    "protocol-http1": "0.41.0",
+    "protocol-http2": "0.29.1",
+    "protocol-url": "0.19.0",
+    "rake": "13.4.2",
+    "zeitwerk": "2.8.3"
+  },
+  "runs": [
+    {
+      "count": 292553,
+      "total": 60003572548,
+      "rps": 4875.593028497954,
+      "average": 6439315,
+      "latencyDistribution": [
+        {
+          "percentage": 10,
+          "latency": 918442
+        },
+        {
+          "percentage": 25,
+          "latency": 1419908
+        },
+        {
+          "percentage": 50,
+          "latency": 4910928
+        },
+        {
+          "percentage": 75,
+          "latency": 8359230
+        },
+        {
+          "percentage": 90,
+          "latency": 14945035
+        },
+        {
+          "percentage": 95,
+          "latency": 19880127
+        },
+        {
+          "percentage": 99,
+          "latency": 30658975
+        }
+      ],
+      "statusCodeDistribution": {
+        "OK": 292553
+      },
+      "errorDistribution": {}
+    },
+    {
+      "count": 296622,
+      "total": 59998656109,
+      "rps": 4943.810732379149,
+      "average": 6354675,
+      "latencyDistribution": [
+        {
+          "percentage": 10,
+          "latency": 923785
+        },
+        {
+          "percentage": 25,
+          "latency": 1358802
+        },
+        {
+          "percentage": 50,
+          "latency": 4928889
+        },
+        {
+          "percentage": 75,
+          "latency": 8160348
+        },
+        {
+          "percentage": 90,
+          "latency": 14968869
+        },
+        {
+          "percentage": 95,
+          "latency": 19752684
+        },
+        {
+          "percentage": 99,
+          "latency": 29687152
+        }
+      ],
+      "statusCodeDistribution": {
+        "OK": 296622
+      },
+      "errorDistribution": {}
+    },
+    {
+      "count": 303446,
+      "total": 59996773391,
+      "rps": 5057.705320625115,
+      "average": 6216587,
+      "latencyDistribution": [
+        {
+          "percentage": 10,
+          "latency": 914501
+        },
+        {
+          "percentage": 25,
+          "latency": 1359482
+        },
+        {
+          "percentage": 50,
+          "latency": 4887121
+        },
+        {
+          "percentage": 75,
+          "latency": 7989115
+        },
+        {
+          "percentage": 90,
+          "latency": 14523021
+        },
+        {
+          "percentage": 95,
+          "latency": 19133898
+        },
+        {
+          "percentage": 99,
+          "latency": 28611603
+        }
+      ],
+      "statusCodeDistribution": {
+        "OK": 303446
+      },
+      "errorDistribution": {}
+    }
+  ],
+  "passed": true,
+  "worker_pids": [
+    3829
+  ],
+  "warmup": {
+    "count": 155971,
+    "total": 29998996608,
+    "rps": 5199.207228097967,
+    "average": 6030485,
+    "latencyDistribution": [
+      {
+        "percentage": 10,
+        "latency": 880773
+      },
+      {
+        "percentage": 25,
+        "latency": 1276788
+      },
+      {
+        "percentage": 50,
+        "latency": 4617858
+      },
+      {
+        "percentage": 75,
+        "latency": 7711417
+      },
+      {
+        "percentage": 90,
+        "latency": 14187841
+      },
+      {
+        "percentage": 95,
+        "latency": 18853980
+      },
+      {
+        "percentage": 99,
+        "latency": 28621801
+      }
+    ],
+    "statusCodeDistribution": {
+      "OK": 155971
+    },
+    "errorDistribution": {}
+  },
+  "median": {
+    "rps": 4943.810732379149,
+    "p50_ns": 4910928,
+    "p95_ns": 19752684
+  },
+  "requests_by_worker": {
+    "3829": 10264
+  },
+  "idle_shutdown_seconds": 0.23347902297973633,
+  "finished_at": "2026-10-03T08:01:03Z"
+}
