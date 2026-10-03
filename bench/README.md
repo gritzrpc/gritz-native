@@ -20,7 +20,9 @@ ruby bench/compare.rb previous.json current.json
 
 `--smoke` uses one second of warmup and one two-second sample. It checks execution only and cannot be compared to the full-run baseline. Main CI exercises the comparison boundary and failed-run cleanup tests on all supported Rubies, and runs the five Native smoke scenarios on Ruby 3.4.
 
-The nightly `Performance` workflow requires a dedicated Linux runner with Ruby 3.4, ghz 0.121.0, the performance CPU governor and no competing workloads. Set repository variables `BENCH_RUNNER_LABEL` to its unique runner label and `BENCH_BASELINE_DIRECTORY` to an absolute directory on that runner containing reviewed full-run `native-<scenario>.json` and `async-<scenario>.json` baselines. The workflow requires those baselines and rejects regressions; it uploads results even on failure. Leave the label unset until that runner exists. Container measurements with an unavailable governor are recorded as local evidence, not dedicated-runner acceptance.
+The nightly `Performance` workflow runs on the registered `gritz-benchmark-arm64` runner, with label `colima-arm64-2cpu-1g`. It checks Ruby 3.4, ghz 0.121.0, two CPU shares and a 1GiB memory limit. Repository variables select that label and `/opt/gritz-baselines`. Baselines persist in a Docker volume. Initial collection explicitly uses the dispatch input `initialize_baseline=true`; later runs require the baseline and reject regressions. Initialization creates missing files and never overwrites an existing baseline. Results are uploaded even on failure. The `scenario` input can select one workload; scheduled runs measure all five on both adapters.
+
+The virtual CPUs expose no CPU governor. This limitation and the conditions for comparisons are recorded in the [environment ADR](../docs/adr/benchmark-environment.md). Measurements require an otherwise idle Colima VM. The runner is online while Docker/Colima and this machine are running; its restart policy is `unless-stopped`. See [runner operation](runner/README.md) for registration, volumes and restart commands.
 
 ## Chaos
 

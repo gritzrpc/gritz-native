@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1
+
+- Use gritz-core 0.6.1 to avoid formatting suppressed RPC completion logs.
+
 ## 0.6.0
 
 - Support gritz-core 0.6.0 and its shared real-server helper, preserving `Gritz::Testing::Server` and Native RPC behavior.

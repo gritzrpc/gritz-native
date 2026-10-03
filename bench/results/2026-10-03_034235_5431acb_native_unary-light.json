@@ -1,0 +1,212 @@
+{
+  "schema": 1,
+  "started_at": "2026-10-03T03:42:35Z",
+  "source_commit": "5431acb1eb876677a197b9d4afe0484d5b2df55a",
+  "source_sha256": "c430eb386fa1ee3b637fc1e4a5fd9df5b02f1883b9b358b2a31d36ed4a9849a3",
+  "scenario": "unary-light",
+  "transport": "native",
+  "settings": {
+    "warmup_seconds": 30,
+    "duration_seconds": 60,
+    "repetitions": 3,
+    "workers": 1,
+    "threads": 64,
+    "ghz": {
+      "concurrency": 32,
+      "connections": 32,
+      "timeout": "5s",
+      "duration-stop": "wait"
+    },
+    "call": "helloworld.Greeter/SayHello",
+    "data": "{\"name\":\"light\"}",
+    "raw": false,
+    "workload_sha256": "cdbf83a648dd4ee1bd269ae6e5a8e7ce6c210dcf2e999e31a0fc8abcf8b75758"
+  },
+  "environment": {
+    "runner": "colima-arm64-2cpu-1g",
+    "ruby": "ruby 3.4.11 (2026-09-23 revision 592f1ffdb3) +PRISM [aarch64-linux]",
+    "kernel": "6.8.0-117-generic",
+    "cpu_count": 2,
+    "cpu_model": "CPU implementer\t: 0x61",
+    "cpu_limit": "200000 100000",
+    "memory_limit": "1073741824",
+    "ghz": "v0.121.0",
+    "governor": "unavailable"
+  },
+  "runs": [
+    {
+      "count": 528936,
+      "total": 59999678054,
+      "rps": 8815.647302706442,
+      "average": 3515979,
+      "latencyDistribution": [
+        {
+          "percentage": 10,
+          "latency": 889093
+        },
+        {
+          "percentage": 25,
+          "latency": 1655656
+        },
+        {
+          "percentage": 50,
+          "latency": 2837949
+        },
+        {
+          "percentage": 75,
+          "latency": 4462472
+        },
+        {
+          "percentage": 90,
+          "latency": 6662991
+        },
+        {
+          "percentage": 95,
+          "latency": 8638523
+        },
+        {
+          "percentage": 99,
+          "latency": 15197241
+        }
+      ],
+      "statusCodeDistribution": {
+        "OK": 528936
+      },
+      "errorDistribution": {}
+    },
+    {
+      "count": 462856,
+      "total": 60000372618,
+      "rps": 7714.218759053907,
+      "average": 4039938,
+      "latencyDistribution": [
+        {
+          "percentage": 10,
+          "latency": 922710
+        },
+        {
+          "percentage": 25,
+          "latency": 1791792
+        },
+        {
+          "percentage": 50,
+          "latency": 3178198
+        },
+        {
+          "percentage": 75,
+          "latency": 5104700
+        },
+        {
+          "percentage": 90,
+          "latency": 7863442
+        },
+        {
+          "percentage": 95,
+          "latency": 10492924
+        },
+        {
+          "percentage": 99,
+          "latency": 18185147
+        }
+      ],
+      "statusCodeDistribution": {
+        "OK": 462856
+      },
+      "errorDistribution": {}
+    },
+    {
+      "count": 459429,
+      "total": 59999188525,
+      "rps": 7657.253561163892,
+      "average": 4069810,
+      "latencyDistribution": [
+        {
+          "percentage": 10,
+          "latency": 915090
+        },
+        {
+          "percentage": 25,
+          "latency": 1788574
+        },
+        {
+          "percentage": 50,
+          "latency": 3190840
+        },
+        {
+          "percentage": 75,
+          "latency": 5136890
+        },
+        {
+          "percentage": 90,
+          "latency": 7961650
+        },
+        {
+          "percentage": 95,
+          "latency": 10738738
+        },
+        {
+          "percentage": 99,
+          "latency": 18457197
+        }
+      ],
+      "statusCodeDistribution": {
+        "OK": 459429
+      },
+      "errorDistribution": {}
+    }
+  ],
+  "passed": true,
+  "worker_pids": [
+    673
+  ],
+  "warmup": {
+    "count": 284946,
+    "total": 29998132256,
+    "rps": 9498.791377020056,
+    "average": 3253768,
+    "latencyDistribution": [
+      {
+        "percentage": 10,
+        "latency": 855177
+      },
+      {
+        "percentage": 25,
+        "latency": 1564477
+      },
+      {
+        "percentage": 50,
+        "latency": 2635865
+      },
+      {
+        "percentage": 75,
+        "latency": 4131501
+      },
+      {
+        "percentage": 90,
+        "latency": 6135725
+      },
+      {
+        "percentage": 95,
+        "latency": 7866147
+      },
+      {
+        "percentage": 99,
+        "latency": 13788931
+      }
+    ],
+    "statusCodeDistribution": {
+      "OK": 284946
+    },
+    "errorDistribution": {}
+  },
+  "median": {
+    "rps": 7714.218759053907,
+    "p50_ns": 3178198,
+    "p95_ns": 10492924
+  },
+  "requests_by_worker": {
+    "673": 17881
+  },
+  "idle_shutdown_seconds": 0.2636204560403712,
+  "finished_at": "2026-10-03T03:46:08Z"
+}

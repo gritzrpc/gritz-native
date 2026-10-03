@@ -50,7 +50,8 @@ environment[:governor] = File.exist?(governor) ? File.read(governor).strip : "un
 sources = Dir[File.join(root, "{lib,bench,bin}/**/*")].select { |path| File.file?(path) && !path.include?("/results/") }.sort
 report = { schema: 1, started_at: Time.now.utc.iso8601, source_commit: sha.strip,
            source_sha256: Digest::SHA256.hexdigest(sources.map { |path| File.binread(path) }.join),
-           scenario:, transport: options[:transport], settings:, environment:, runs: [], passed: false }
+           scenario:, transport: options[:transport], settings:, environment:,
+           gems: Gem.loaded_specs.sort.to_h.transform_values { |spec| spec.version.to_s }, runs: [], passed: false }
 filename = "#{Time.now.utc.strftime('%Y-%m-%d_%H%M%S')}_#{sha.strip[0, 7]}_#{options[:transport]}_#{scenario}.json"
 output = options[:output] || File.join(root, "bench/results", filename)
 FileUtils.mkdir_p(File.dirname(output))

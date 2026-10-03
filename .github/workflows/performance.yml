@@ -2,6 +2,16 @@ name: Performance
 
 on:
   workflow_dispatch:
+    inputs:
+      scenario:
+        description: Scenario to measure (all for the full matrix)
+        type: choice
+        default: all
+        options: [all, unary-light, unary-cpu, unary-io, server-streaming, bidi]
+      initialize_baseline:
+        description: Create missing baselines on this runner
+        type: boolean
+        default: false
   schedule:
     - cron: '23 3 * * *'
 
@@ -14,13 +24,15 @@ concurrency:
 
 jobs:
   benchmark:
-    if: ${{ vars.BENCH_RUNNER_LABEL != '' }}
+    if: ${{ github.ref == 'refs/heads/main' && vars.BENCH_RUNNER_LABEL != '' }}
     runs-on: [self-hosted, Linux, '${{ vars.BENCH_RUNNER_LABEL }}']
     timeout-minutes: 60
     env:
       BUNDLE_GEMFILE: bench/Gemfile
       BENCH_RUNNER_ID: '${{ vars.BENCH_RUNNER_LABEL }}'
       BASELINE_DIRECTORY: '${{ vars.BENCH_BASELINE_DIRECTORY }}'
+      SCENARIO: '${{ inputs.scenario || ''all'' }}'
+      INITIALIZE_BASELINE: '${{ inputs.initialize_baseline }}'
     steps:
       - uses: actions/checkout@v6
         with:
@@ -40,9 +52,19 @@ jobs:
           mkdir -p tmp/performance
           for adapter in native async; do
             for scenario in unary-light unary-cpu unary-io server-streaming bidi; do
+              if [ "$SCENARIO" != all ] && [ "$SCENARIO" != "$scenario" ]; then continue; fi
+              baseline="$BASELINE_DIRECTORY/$adapter-$scenario.json"
+              if [ ! -f "$baseline" ] && [ "$INITIALIZE_BASELINE" != true ]; then
+                echo "Missing reviewed baseline: $baseline" >&2
+                exit 1
+              fi
               bundle exec ruby bin/bench "$scenario" --transport "$adapter" \
-                --output "tmp/performance/$adapter-$scenario.json" \
-                --baseline "$BASELINE_DIRECTORY/$adapter-$scenario.json"
+                --output "tmp/performance/$adapter-$scenario.json"
+              if [ -f "$baseline" ]; then
+                ruby bench/compare.rb "$baseline" "tmp/performance/$adapter-$scenario.json"
+              else
+                cp "tmp/performance/$adapter-$scenario.json" "$baseline"
+              fi
             done
           done
       - uses: actions/upload-artifact@v4
