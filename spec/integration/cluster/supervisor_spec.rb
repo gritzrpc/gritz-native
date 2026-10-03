@@ -83,7 +83,8 @@ RSpec.describe "Linux supervised cluster", skip: RUBY_PLATFORM.include?("linux")
     start_cluster.wait_until(workers: 2)
     @cluster.signal("TTIN").wait_until(workers: 3)
     enlarged = worker_pids
-    @cluster.signal("TTOU").wait_until(workers: 2)
+    @cluster.signal("TTOU").wait_until(workers: 2) { |status| status[:workers].size == 2 }
+    expect(worker_pids.size).to eq(2)
     expect_reaped(enlarged - worker_pids)
     @cluster.signal("HUP")
     expect(stub.say_hello(message("reopened"), deadline: Time.now + 5).message).to eq("Hello, reopened")
