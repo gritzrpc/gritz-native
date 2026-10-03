@@ -26,6 +26,8 @@ The virtual CPUs expose no CPU governor. This limitation and the conditions for 
 
 ## Chaos
 
+Comparisons also require unchanged third-party Gem versions; Gritz versions may change because the gate measures framework changes. The initial full-matrix workflow did not pass: unary light completed three samples, then CPU traffic encountered two deadline errors during macOS host suspension. Both completed and failed reports are retained. A complete, unsuspended matrix and a later comparison workflow are still required before treating the performance gate as verified.
+
 Run only in an isolated Linux container with its own network namespace and `CAP_NET_ADMIN`, with `tc` installed. Keep the container memory bounded (the retained run used two CPUs and 1GiB). The scenario kills five randomly chosen workers with a fixed seed under live RPC traffic, checks recovery after each kill, adds 25ms loopback delay with `tc netem`, verifies 50 delayed RPCs, removes the qdisc, and allocates 96MiB in one worker to exercise the 120MiB RSS recycling limit.
 
 ```sh
