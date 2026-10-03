@@ -17,6 +17,9 @@ begin
   %w[scenario transport settings environment].each do |key|
     raise "incomparable #{key}; collect a baseline on the same runner" unless before.fetch(key) == after.fetch(key)
   end
+  dependencies = [before, after].map { |result| result.fetch("gems").reject { |name, _version| name.match?(/\Agritz(?:-|\z)/) } }
+  raise "incomparable dependency versions; review and collect a new baseline" unless dependencies.first == dependencies.last
+
   changes = %w[rps p50_ns p95_ns].to_h do |metric|
     previous, current = [before, after].map { |result| result.fetch("median").fetch(metric) }
     degradation = metric == "rps" ? (previous - current) / previous : (current - previous) / previous

@@ -1,0 +1,42 @@
+{
+  "started_at": "2026-10-03T06:55:24Z",
+  "duration_seconds": 30,
+  "workers": 4,
+  "passed": false,
+  "ruby": "ruby 3.4.11 (2026-09-23 revision 592f1ffdb3) +PRISM [aarch64-linux]",
+  "grpc": "1.83.0",
+  "transport": "async",
+  "old_worker_pids": [
+    644,
+    647,
+    650,
+    656
+  ],
+  "requests_before_restart": {
+    "644": 5,
+    "647": 42,
+    "650": 69,
+    "656": 3
+  },
+  "restart_seconds": 0.9270198789890856,
+  "new_worker_pids": [
+    667,
+    671,
+    675,
+    679
+  ],
+  "ghz": {
+    "count": 3001,
+    "total": 30014322566,
+    "average": 13597214,
+    "statusCodeDistribution": {
+      "OK": 3000,
+      "Unavailable": 1
+    },
+    "errorDistribution": {
+      "rpc error: code = Unavailable desc = the connection is draining": 1
+    }
+  },
+  "error": "RuntimeError: ghz reported errors: {\"rpc error: code = Unavailable desc = the connection is draining\" => 1}",
+  "finished_at": "2026-10-03T06:55:55Z"
+}

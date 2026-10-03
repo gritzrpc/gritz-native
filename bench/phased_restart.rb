@@ -8,15 +8,17 @@ require "socket"
 require "time"
 require "gritz/native"
 
-options = { ghz: "ghz", duration: 30, output: "tmp/phased-restart.json" }
+options = { ghz: "ghz", duration: 30, output: "tmp/phased-restart.json", transport: "native" }
 OptionParser.new do |parser|
   parser.banner = "Usage: bundle exec ruby bench/phased_restart.rb [options] (Linux)"
   parser.on("--ghz PATH") { |value| options[:ghz] = value }
   parser.on("--duration SECONDS", Float) { |value| options[:duration] = value }
   parser.on("--output PATH") { |value| options[:output] = value }
+  parser.on("--transport NAME") { |value| options[:transport] = value }
 end.parse!
 abort "Linux is required for the reuseport restart gate" unless RUBY_PLATFORM.include?("linux")
 abort "duration must be at least 10 seconds" unless options[:duration] >= 10
+abort "transport must be native or async" unless %w[native async].include?(options[:transport])
 
 def free_address
   listener = TCPServer.new("127.0.0.1", 0)
@@ -32,13 +34,13 @@ output = File.expand_path(options[:output])
 FileUtils.mkdir_p(File.dirname(output))
 raw_output = "#{output.sub(/\.json\z/, '')}-ghz.json"
 ghz_log = "#{output.sub(/\.json\z/, '')}-ghz.log"
-cluster = Gritz::Testing::Cluster.new(
-  config_path: File.expand_path("../spec/integration/cluster/config.rb", __dir__),
-  env: { "CLUSTER_BIND" => address, "CLUSTER_WORKERS" => "4", "GRITZ_ADMIN_BIND" => free_address,
-         "GRITZ_DRAIN_DELAY" => "0.2", "GRITZ_SHUTDOWN_TIMEOUT" => "5" }
-)
+environment = { "CLUSTER_BIND" => address, "CLUSTER_WORKERS" => "4", "GRITZ_ADMIN_BIND" => free_address,
+                "GRITZ_DRAIN_DELAY" => "0.2", "GRITZ_SHUTDOWN_TIMEOUT" => "5",
+                "BENCH_BIND" => address, "BENCH_TRANSPORT" => options[:transport], "BENCH_WORKERS" => "4", "BENCH_THREADS" => "16" }
+config = options[:transport] == "async" ? "server.rb" : "../spec/integration/cluster/config.rb"
+cluster = Gritz::Testing::Cluster.new(config_path: File.expand_path(config, __dir__), env: environment)
 report = { started_at: Time.now.utc.iso8601, duration_seconds: options[:duration], workers: 4, passed: false,
-           ruby: RUBY_DESCRIPTION, grpc: GRPC::VERSION }
+           ruby: RUBY_DESCRIPTION, grpc: GRPC::VERSION, transport: options[:transport] }
 
 begin
   cluster.start.wait_until(workers: 4)
@@ -46,7 +48,8 @@ begin
   report[:old_worker_pids] = old
   ghz_pid = Process.spawn(
     options[:ghz], "--insecure", "--proto=#{File.expand_path('../spec/fixtures/hello/hello.proto', __dir__)}",
-    "--call=helloworld.Greeter/SayHello", '--data={"name":"slow:0.01"}', "--connections=64", "--concurrency=64",
+    "--call=helloworld.Greeter/SayHello", "--data=#{JSON.generate(name: options[:transport] == 'async' ? 'io' : 'slow:0.01')}",
+    "--connections=64", "--concurrency=64",
     "--rps=100", "--duration=#{options[:duration]}s", "--duration-stop=wait", "--timeout=2s",
     "--format=json", "--output=#{raw_output}", address, out: ghz_log, err: ghz_log
   )

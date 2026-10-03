@@ -9,6 +9,7 @@ RSpec.describe "performance regression gate" do
     Dir.mktmpdir do |directory|
       baseline = { "scenario" => "unary-light", "transport" => "native", "settings" => { "workers" => 1 },
                    "environment" => { "runner" => "fixed", "ruby" => RUBY_DESCRIPTION }, "passed" => true,
+                   "gems" => { "gritz-core" => "0.6.1", "grpc" => "1.83.0" },
                    "median" => { "rps" => 100.0, "p50_ns" => 100.0, "p95_ns" => 200.0 } }
       before = File.join(directory, "before.json")
       after = File.join(directory, "after.json")
@@ -23,6 +24,8 @@ RSpec.describe "performance regression gate" do
       expect(check.call("median" => { "rps" => 100.0, "p50_ns" => 100.0, "p95_ns" => 220.0 }).last).not_to be_success
       expect(check.call("passed" => false).last).not_to be_success
       expect(check.call("environment" => { "runner" => "different" }).last).not_to be_success
+      expect(check.call("gems" => { "gritz-core" => "0.6.2", "grpc" => "1.83.0" }).last).to be_success
+      expect(check.call("gems" => { "gritz-core" => "0.6.1", "grpc" => "1.84.0" }).last).not_to be_success
       expect(check.call("median" => { "rps" => 0 }).last).not_to be_success
     end
   end

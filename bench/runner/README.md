@@ -15,6 +15,8 @@ gh workflow run performance.yml --repo gritzrpc/gritz-native -f scenario=unary-l
 
 Initialization creates missing baselines; it still compares any baseline that already exists. Normal runs and nightly runs require every selected baseline. Retain and review the uploaded artifacts before copying results into `bench/results`. Stop other Colima workloads while measuring. When the host sleeps or Docker is stopped, the runner is offline; the `unless-stopped` policy resumes it when Docker restarts unless it was explicitly stopped.
 
+On macOS, keep the host awake for manual full runs with `caffeinate -i -t 3600` in another terminal. Host suspension invalidates an active measurement and may prevent artifact upload. The first collection failed after idle sleep with two deadline errors; its failed JSON is retained in `bench/results/2026-10-03-native-cpu-host-sleep.json`. Collect a complete run with no suspension before accepting a baseline.
+
 To rebuild, create an ignored build directory containing `actions-runner-linux-arm64-2.337.0.tar.gz`, executable `ghz` and a trusted public certificate bundle `ca.pem`. Verify the Runner archive against SHA256 `9b1dc70626422526e3c94767cf024896beb15da5342a3f4819bf2feac13e0393` and ghz using the manifest handled by `.devcontainer/install-tools.sh`. The build command used here is:
 
 ```sh
