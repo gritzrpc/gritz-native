@@ -19,4 +19,4 @@ The current Colima VM is shared with other projects, whose containers are stoppe
 
 ## Performance targets
 
-This environment supplies reproducible resource limits and an actual CI execution path. The framework p50 overhead and worker-scaling targets still require measurement; successful runner registration or short smoke tests do not establish them. Record any unmet target and its remedy separately after the full runs.
+This environment supplies reproducible resource limits and an actual CI execution path. Full measurements establish Native p50 overhead +3.70% and two-worker CPU scaling of 1.970x Native / 1.815x Async. The [validation report](../reports/performance-validation.md) retains the full matrix, matched settings, comparison workflow and Async's unmet restart target. Registration and smoke tests alone do not establish those results. The [sporadic CPU deadline ADR](cpu-deadline-investigation.md) preserves the failed saturated sample and unresolved cause.
